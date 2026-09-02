@@ -170,7 +170,7 @@ See [limitations](docs/limitations.md) for details.
 
 - [Repository article source](docs/blog/parse-before-you-prompt.md)
 - Continuum web article URL: **to be added after publication**
-- Companion repository: https://github.com/continuumresourcesllc/parse-before-you-prompt
+- Companion repository: https://github.com/tprem2002/parse-before-you-prompt
 
 ## License
 

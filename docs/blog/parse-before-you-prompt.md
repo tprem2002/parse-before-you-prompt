@@ -58,7 +58,7 @@ The stronger conclusion is architectural: prompt quality cannot repair missing O
 
 ## Sources and method
 
-The runnable companion repository is available at [continuumresourcesllc/parse-before-you-prompt](https://github.com/continuumresourcesllc/parse-before-you-prompt).
+The runnable companion repository is available at [tprem2002/parse-before-you-prompt](https://github.com/tprem2002/parse-before-you-prompt).
 
 <!-- Replace this URL if the final GitHub organization/repository name differs. -->
 
