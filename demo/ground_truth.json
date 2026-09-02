@@ -1,0 +1,238 @@
+[
+  {
+    "id": "Q01",
+    "question": "What verification method is specified for REQ-204?",
+    "answerable": true,
+    "accepted_answers": [
+      "test",
+      "verified by test",
+      "end-to-end test"
+    ],
+    "expected_pages": [
+      4
+    ],
+    "expected_kind": "table",
+    "expected_terms": [
+      "REQ-204",
+      "Communications",
+      "Test"
+    ]
+  },
+  {
+    "id": "Q02",
+    "question": "Which subsystem owns REQ-205 and how is it verified?",
+    "answerable": true,
+    "accepted_answers": [
+      "navigation; analysis",
+      "navigation by analysis",
+      "Navigation and Analysis"
+    ],
+    "expected_pages": [
+      4
+    ],
+    "expected_kind": "table",
+    "expected_terms": [
+      "REQ-205",
+      "Navigation",
+      "Analysis"
+    ]
+  },
+  {
+    "id": "Q03",
+    "question": "What thermal margin threshold is required by REQ-207?",
+    "answerable": true,
+    "accepted_answers": [
+      "18 percent",
+      "18%",
+      "a thermal margin of 18 percent"
+    ],
+    "expected_pages": [
+      5
+    ],
+    "expected_kind": "table",
+    "expected_terms": [
+      "REQ-207",
+      "thermal",
+      "18 percent"
+    ]
+  },
+  {
+    "id": "Q04",
+    "question": "What is the readiness status of REQ-209?",
+    "answerable": true,
+    "accepted_answers": [
+      "conditional",
+      "status is conditional"
+    ],
+    "expected_pages": [
+      5
+    ],
+    "expected_kind": "table",
+    "expected_terms": [
+      "REQ-209",
+      "Conditional"
+    ]
+  },
+  {
+    "id": "Q05",
+    "question": "How much scheduled maintenance is permitted each quarter?",
+    "answerable": true,
+    "accepted_answers": [
+      "four hours per quarter",
+      "4 hours per quarter",
+      "no more than four hours"
+    ],
+    "expected_pages": [
+      3
+    ],
+    "expected_kind": "list",
+    "expected_terms": [
+      "scheduled maintenance",
+      "four hours per quarter"
+    ]
+  },
+  {
+    "id": "Q06",
+    "question": "What readiness percentage was achieved in Q4?",
+    "answerable": true,
+    "accepted_answers": [
+      "92 percent",
+      "92%"
+    ],
+    "expected_pages": [
+      6
+    ],
+    "expected_kind": "picture",
+    "expected_terms": [
+      "Q4",
+      "92 percent"
+    ]
+  },
+  {
+    "id": "Q07",
+    "question": "Where does the Sensor Gateway send telemetry?",
+    "answerable": true,
+    "accepted_answers": [
+      "Validation Service",
+      "the Validation Service"
+    ],
+    "expected_pages": [
+      7
+    ],
+    "expected_kind": "picture",
+    "expected_terms": [
+      "Sensor Gateway",
+      "telemetry",
+      "Validation Service"
+    ]
+  },
+  {
+    "id": "Q08",
+    "question": "What recovery window is stated in the scanned appendix?",
+    "answerable": true,
+    "accepted_answers": [
+      "15 minutes",
+      "a 15-minute recovery window"
+    ],
+    "expected_pages": [
+      8
+    ],
+    "expected_kind": "text",
+    "expected_terms": [
+      "recovery window",
+      "15 minutes"
+    ]
+  },
+  {
+    "id": "Q09",
+    "question": "What is the document identifier?",
+    "answerable": true,
+    "accepted_answers": [
+      "AUR-MRA-001"
+    ],
+    "expected_pages": [
+      1
+    ],
+    "expected_kind": "text",
+    "expected_terms": [
+      "Document ID",
+      "AUR-MRA-001"
+    ]
+  },
+  {
+    "id": "Q10",
+    "question": "What revision is this assessment?",
+    "answerable": true,
+    "accepted_answers": [
+      "C",
+      "revision C"
+    ],
+    "expected_pages": [
+      1
+    ],
+    "expected_kind": "text",
+    "expected_terms": [
+      "Revision",
+      "C"
+    ]
+  },
+  {
+    "id": "Q11",
+    "question": "When was the assessment released?",
+    "answerable": true,
+    "accepted_answers": [
+      "August 28, 2026",
+      "2026-08-28"
+    ],
+    "expected_pages": [
+      1
+    ],
+    "expected_kind": "text",
+    "expected_terms": [
+      "Release Date",
+      "August 28, 2026"
+    ]
+  },
+  {
+    "id": "Q12",
+    "question": "Which requirement identifier appears in the thermal-margin code sample?",
+    "answerable": true,
+    "accepted_answers": [
+      "REQ-207"
+    ],
+    "expected_pages": [
+      9
+    ],
+    "expected_kind": "code",
+    "expected_terms": [
+      "thermal_margin",
+      "REQ-207"
+    ]
+  },
+  {
+    "id": "Q13",
+    "question": "What was the contract award date?",
+    "answerable": false,
+    "accepted_answers": [
+      "not found",
+      "insufficient evidence",
+      "not stated"
+    ],
+    "expected_pages": [],
+    "expected_kind": "unsupported",
+    "expected_terms": []
+  },
+  {
+    "id": "Q14",
+    "question": "Who is the program's chief executive?",
+    "answerable": false,
+    "accepted_answers": [
+      "not found",
+      "insufficient evidence",
+      "not stated"
+    ],
+    "expected_pages": [],
+    "expected_kind": "unsupported",
+    "expected_terms": []
+  }
+]

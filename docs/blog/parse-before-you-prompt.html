@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="A controlled comparison showing how document representation affects retrieval, answers, and provenance in RAG.">
+  <title>Parse Before You Prompt · Continuum Field Notes</title>
+  <style>
+    :root{--bg:#f4f7fb;--paper:#fff;--ink:#132238;--muted:#607089;--line:#d9e2ec;--navy:#102a43;--cyan:#00a6c7;--teal:#14b8a6;--violet:#7667d8;--shadow:0 20px 55px rgba(16,42,67,.11)}
+    @media(prefers-color-scheme:dark){:root{--bg:#091522;--paper:#102235;--ink:#edf6ff;--muted:#aabbd0;--line:#294158;--navy:#eaf4ff;--shadow:0 20px 55px rgba(0,0,0,.3)}}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.72 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--cyan)}img{display:block;width:100%;height:auto;border-radius:14px}nav{position:sticky;top:0;z-index:4;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(14px)}.nav{max-width:1160px;margin:auto;padding:13px 24px;display:flex;justify-content:space-between;align-items:center}.brand{font-size:.82rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.nav a{text-decoration:none;color:var(--muted);font-size:.82rem}.hero{background:linear-gradient(135deg,#0b263d 0%,#103c57 52%,#183b64 100%);color:#fff;overflow:hidden}.hero-inner{max-width:1160px;margin:auto;padding:82px 24px 72px;display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}.kicker{text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;font-weight:800;color:#75e5f4}.hero h1{font-size:clamp(3.2rem,7vw,6.6rem);line-height:.88;letter-spacing:-.065em;margin:.2em 0}.hero h1 span{background:linear-gradient(90deg,#65e1f1,#9a8cff);-webkit-background-clip:text;background-clip:text;color:transparent}.dek{max-width:740px;color:#d3e4f2;font-size:1.2rem}.stamp{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);border-radius:24px;padding:26px}.stamp strong{display:block;font-size:3.4rem;line-height:1;color:#71e2ef}.stamp span{display:block;color:#c8d8e7;margin-top:8px}.meta{display:flex;gap:16px;flex-wrap:wrap;color:#b9cddd;font-size:.85rem}.shell{max-width:1160px;margin:auto;padding:54px 24px 90px}.lead{font:650 clamp(1.45rem,3vw,2.15rem)/1.35 Georgia,serif;max-width:880px;margin:0 auto 64px;padding-left:28px;border-left:5px solid var(--cyan)}section{max-width:900px;margin:0 auto 82px;scroll-margin-top:80px}h2{font-size:clamp(2rem,4vw,3.25rem);line-height:1.08;letter-spacing:-.04em;margin:.2em 0 .55em}.section-no{font-size:.74rem;text-transform:uppercase;letter-spacing:.14em;font-weight:850;color:var(--teal)}.facts,.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:21px;box-shadow:var(--shadow)}.card strong{font-size:1.9rem;display:block;line-height:1.1;color:var(--teal)}.card small{color:var(--muted)}figure{margin:36px 0}.caption{font-size:.8rem;color:var(--muted);margin-top:10px}.chart{background:#fff;border:1px solid var(--line);padding:10px;border-radius:18px;box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;background:var(--paper);font-size:.88rem;border:1px solid var(--line)}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{background:color-mix(in srgb,var(--paper) 80%,var(--cyan) 20%)}.callout{border-radius:18px;padding:28px;background:linear-gradient(135deg,color-mix(in srgb,var(--paper) 90%,var(--cyan) 10%),color-mix(in srgb,var(--paper) 92%,var(--violet) 8%));border:1px solid var(--line)}.boundary{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:30px 0}.boundary .card strong{font-size:1rem}.arrow{align-self:center;color:var(--cyan);font-size:2rem}.limits{columns:2;column-gap:34px}.limits li{break-inside:avoid;margin-bottom:12px}.sources{font-size:.84rem;color:var(--muted)}footer{border-top:1px solid var(--line);padding:28px 24px;color:var(--muted);font-size:.8rem}.footer{max-width:1160px;margin:auto;display:flex;justify-content:space-between;gap:20px}.skip{position:absolute;left:-9999px}.skip:focus{left:12px;top:12px;background:#fff;color:#000;padding:10px;z-index:9}
+    @media(max-width:760px){.hero-inner{grid-template-columns:1fr}.facts,.metrics{grid-template-columns:1fr 1fr}.boundary{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}.limits{columns:1}.footer{display:block}.nav a{display:none}}
+    @media print{nav{display:none}.hero{background:#fff!important;color:#000}.hero .dek,.hero .meta{color:#333}.stamp{border:1px solid #bbb}.stamp strong{color:#000}.shell{padding-top:30px}section,figure,.card{break-inside:avoid}.chart{box-shadow:none}a{color:#000;text-decoration:none}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#article">Skip to article</a>
+  <nav><div class="nav"><div class="brand">Continuum · Field Notes</div><a href="#method">Method &amp; sources</a></div></nav>
+  <header class="hero">
+    <div class="hero-inner">
+      <div><div class="kicker">Measured document intelligence</div><h1>Parse Before<br><span>You Prompt.</span></h1><p class="dek">Why Document Intelligence Is the Hidden Layer of Reliable RAG</p><div class="meta"><span>Continuum Resources LLC · Generative AI</span><span>September 2026</span><span>8 min read</span></div></div>
+      <div class="stamp" aria-label="Evaluation summary"><strong>28</strong><span>pipeline/question cases</span><strong>1 pass</strong><span>same models, different representation</span></div>
+    </div>
+  </header>
+  <main class="shell" id="article">
+    <p class="lead">A RAG system cannot retrieve information that parsing failed to preserve. Parsing is not plumbing; it is the first knowledge-modeling decision.</p>
+
+    <section id="problem"><div class="section-no">01 · The hidden layer</div><h2>The model never sees the document you see.</h2>
+      <p>Teams often tune prompts, swap models, or add retrieval tricks before inspecting the representation entering the index. People see headings, tables, captions, scans, and diagrams. A model sees extracted text, chunks, and metadata. Once OCR text, row-to-column relationships, or page locations disappear, a downstream model cannot reliably reconstruct them.</p>
+      <p>Project Aurora isolates that hidden layer. The same synthetic ten-page PDF went through a PyMuPDF baseline with three fixed windows and a local Docling standard-quality path. Downstream controls were identical: <code>text-embedding-3-large</code>, 3,072 dimensions, Chroma cosine distance, top-k 5, GPT-5.1, the same prompt, schema, validator, abstention contract, and retry policy.</p>
+      <figure><img src="../screenshots/parsing-comparison-page-8.png" alt="Streamlit parsing comparison showing baseline and Docling representations"><figcaption class="caption">The application compares both representations without changing the downstream model configuration.</figcaption></figure>
+    </section>
+
+    <section id="representation"><div class="section-no">02 · Representation before retrieval</div><h2>Structure survived as addressable evidence.</h2>
+      <p>The local Docling standard pipeline used Heron layout, RapidOCR, TableFormer Accurate, Document Figure Classifier v2, Granite Vision 3.3 2B derived descriptions, and CodeFormulaV2.</p>
+      <p>Docling’s <code>DoclingDocument</code> retained typed headings, paragraphs, tables, pictures, captions, and provenance. <code>HierarchicalChunker</code> produced 47 inspection chunks; <code>HybridChunker</code> produced 25 contextualized vector chunks. Ten peers merged, none split, and the maximum contextualized size was 364 tokens under the 800-token ceiling.</p>
+      <div class="facts"><div class="card"><strong>3</strong><small>baseline vectors</small></div><div class="card"><strong>47</strong><small>hierarchical chunks</small></div><div class="card"><strong>25</strong><small>hybrid vectors</small></div><div class="card"><strong>130</strong><small>provenance regions</small></div></div>
+      <p>Local OCR recovered a “15 minutes” fact absent from baseline extraction. Structured tables retained REQ-207 and REQ-209 associations. Pictures and captions remained addressable, while generic picture descriptions stayed explicitly labeled as derived content—not verbatim evidence. Stored page and bounding-box provenance connected chunks back to source regions.</p>
+      <figure><img src="../screenshots/structure-and-chunks.png" alt="Structure and chunk inspector showing Docling hierarchy and hybrid chunks"><figcaption class="caption">Hierarchical chunks explain the document; hybrid chunks prepare it for retrieval.</figcaption></figure>
+      <p>For REQ-205, structured conversion preserved the Navigation + Analysis association that the baseline answered incorrectly. The runtime boundary is browser to Streamlit to FastAPI; FastAPI owns PostgreSQL, parsing, externally supplied Chroma vectors, Azure providers, and local artifacts.</p>
+    </section>
+
+    <section id="evaluation"><div class="section-no">03 · Controlled evaluation</div><h2>Rank one changed more than rank five.</h2>
+      <p>Fourteen ground-truth questions—12 answerable and two unsupported—ran once against both indexes. Strict relevance required expected-page overlap and all normalized expected terms; a broad baseline page range alone did not pass. Answers used deterministic matching against complete accepted alternatives. No LLM judge, reranking, evidence injection, or selective rerun was used.</p>
+      <figure class="chart"><img src="assets/evaluation-retrieval-metrics.png" alt="Bar chart comparing Recall at 1, 3, and 5 and MRR for baseline and Docling standard"></figure>
+      <p>Docling’s Recall@1 was 75.0% versus 41.7%; MRR was 0.836 versus 0.667. Recall@3 tied at 91.7%, while Recall@5 was 100.0% versus 91.7%. Recall@5 is less discriminating because baseline contains only three broad chunks. The decisive miss was OCR: baseline could not retrieve a fact its representation never contained.</p>
+      <figure><img src="../screenshots/evaluation.png" alt="Completed Streamlit Evaluation screen with measured scorecards and charts"><figcaption class="caption">The API-backed Evaluation page shows persisted configuration, progress, scorecards, charts, cases, and exports.</figcaption></figure>
+      <figure class="chart"><img src="assets/evaluation-category-breakdown.png" alt="Bar chart comparing MRR by question category"></figure>
+    </section>
+
+    <section id="answers"><div class="section-no">04 · Answers and evidence</div><h2>Better overall, not perfect everywhere.</h2>
+      <figure class="chart"><img src="assets/evaluation-answer-metrics.png" alt="Bar chart comparing answer, citation, provenance, and abstention metrics"></figure>
+      <p>Docling matched 12 of 12 answerable alternatives; baseline matched 10, or 100.0% versus 83.3%. Table-answer accuracy was 100.0% versus 75.0%. Both branches correctly abstained on both unsupported questions and achieved 100% citation-ID/structure integrity among supported answers.</p>
+      <p>The caveat matters: baseline citation-page accuracy was 100% across 11 supported answers, while Docling scored 91.7% because one correct table answer did not cite an expected page for every claim. Baseline also beat Docling on table-category MRR, 0.750 versus 0.508. Yet baseline’s source locations were broad ranges and precise provenance remained 0%; Docling supplied stored bounding boxes for every supported answer. Citation integrity is not entailment, and provenance does not eliminate hallucination. It makes verification possible.</p>
+      <figure><img src="../screenshots/ask-and-verify.png" alt="Ask and Verify screen with grounded claims and evidence"><figcaption class="caption">Generated source IDs resolve through application-owned metadata, never model-invented coordinates. Claims trace through evidence IDs, retrieval hits, stored chunks, Docling items, pages, bounding boxes, and optional overlays.</figcaption></figure>
+    </section>
+
+    <section id="latency"><div class="section-no">05 · The cost profile</div><h2>Slower preprocessing, leaner questions.</h2>
+      <figure class="chart"><img src="assets/evaluation-latency.png" alt="Bar chart comparing measured retrieval, generation, and total latency"></figure>
+      <p>Mean total query latency was 2,960 ms for Docling and 3,179 ms for baseline. Total chat tokens were 15,325 versus 33,974 because Docling’s retrieved evidence averaged 495 tokens rather than 1,913. But preprocessing was costly: Docling conversion and chunking took 1,954,758 ms—about 32.6 minutes—on CPU, compared with 52 ms for baseline extraction. These timings describe one quality profile on one document, not a throughput benchmark.</p>
+    </section>
+
+    <section id="boundary"><div class="section-no">06 · Data boundary</div><h2>Local documents; approved hosted text calls.</h2>
+      <div class="boundary"><div class="card"><strong>Local application boundary</strong><small>PDF, page images, table and picture crops, Docling JSON, conversion, PostgreSQL, and Chroma</small></div><div class="arrow" aria-hidden="true">→</div><div class="card"><strong>Configured Azure OpenAI boundary</strong><small>contextualized text for embeddings; question plus retrieved textual evidence for GPT-5.1</small></div></div>
+      <p>Docling runs locally with remote services disabled. Original PDFs and visual artifacts remain local. Contextualized chunk text is sent to the configured embedding deployment; query text is embedded there; the question and retrieved textual evidence are sent to GPT-5.1. It would be inaccurate to claim no data leaves the machine—the boundary is selective and explicit.</p>
+    </section>
+
+    <section id="limits"><div class="section-no">07 · Engineering honesty</div><h2>This is evidence, not a universal ranking.</h2>
+      <ul class="limits"><li>One synthetic ten-page document and one completed pass.</li><li>Heading reconstruction was not perfect.</li><li>Some vertical table merges were not reconstructed.</li><li>Picture descriptions were generic derived aids.</li><li>Header repetition was configured but not exercised.</li><li>CPU conversion was slow.</li><li>Citation integrity does not prove entailment.</li><li>Provenance does not eliminate hallucination.</li><li>Granite-Docling-258M was intentionally not evaluated.</li></ul>
+      <div class="callout"><strong>The practical conclusion:</strong> on this document, Docling improved rank-one retrieval, answer matching, table-answer accuracy, precise provenance, token use, and mean latency—but it did not win every metric. Prompt quality cannot repair missing OCR, flattened relationships, or absent source coordinates. Parse accurately. Retrieve structurally. Answer with evidence.</div>
+    </section>
+
+    <section class="sources" id="method"><div class="section-no">Method &amp; sources</div><h2>Reproducible by design.</h2>
+      <p>Explore the runnable companion repository at <a href="https://github.com/continuumresourcesllc/parse-before-you-prompt">continuumresourcesllc/parse-before-you-prompt</a>.</p>
+      <!-- Replace this URL if the final GitHub organization/repository name differs. -->
+      <p>All numeric findings come from one completed controlled Project Aurora evaluation. Results are descriptive and imply no statistical significance.</p>
+      <ul><li><a href="https://docling-project.github.io/docling/">Docling documentation</a></li><li><a href="https://docling-project.github.io/docling/concepts/docling_document/">DoclingDocument concepts</a></li><li><a href="https://docling-project.github.io/docling/concepts/chunking/">Docling native chunking</a></li><li><a href="https://docling-project.github.io/docling/reference/docling_document/">Docling provenance reference</a></li><li><a href="https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/embeddings">Microsoft Learn · Azure OpenAI embeddings</a></li></ul>
+    </section>
+  </main>
+  <footer><div class="footer"><span>Continuum Field Notes · Generative AI</span><span>© 2026 Continuum Resources LLC</span></div></footer>
+</body>
+</html>

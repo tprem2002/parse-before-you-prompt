@@ -1,0 +1,2622 @@
+{
+  "benchmark": {
+    "name": "Project Aurora controlled evaluation",
+    "evaluation_version": "parse-before-you-prompt-evaluation-v1",
+    "metric_definition_version": "parse-before-you-prompt-metrics-v1",
+    "source_sha256": "1425eaee4597c0013b1c4933189e57ecfa14557ad0ac086ef06c93c39e412c34",
+    "ground_truth_sha256": "ee0c7929133130e9d35cd046b1550df58de39d2272630b400f38874353e4c447",
+    "source_page_count": 10,
+    "evaluation_passes": 1
+  },
+  "configuration": {
+    "project_version": "0.1.0",
+    "docling_version": "2.123.1",
+    "embedding_model_name": "text-embedding-3-large",
+    "embedding_deployment_name": "text-embedding-3-large",
+    "vector_dimension": 3072,
+    "chat_model_name": "gpt-5.1",
+    "chat_deployment_name": "gpt-5.1",
+    "chat_api": "Azure OpenAI-compatible Responses API",
+    "chat_reasoning_effort": "low",
+    "chat_max_output_tokens": 16000,
+    "top_k": 5,
+    "distance_type": "cosine",
+    "prompt_version": "parse-before-you-prompt-rag-v1",
+    "response_schema_version": "parse-before-you-prompt-answer-v1",
+    "structured_output_retry_count": 1,
+    "indexed_chunk_counts": {
+      "baseline": 3,
+      "docling_standard": 25
+    }
+  },
+  "metric_definitions": {
+    "mrr": "Mean reciprocal rank of the first strictly relevant hit over answerable questions; a representation miss contributes zero.",
+    "recall_at_1": "Answerable questions with a strictly relevant hit at rank 1 divided by all answerable questions.",
+    "recall_at_3": "Answerable questions with a strictly relevant hit in ranks 1-3 divided by all answerable questions.",
+    "recall_at_5": "Answerable questions with a strictly relevant hit in ranks 1-5 divided by all answerable questions.",
+    "citation_page_accuracy": "Supported answers for which every factual claim has a valid citation resolving to an expected page.",
+    "citation_integrity_rate": "Supported answers whose existing deterministic citation-ID validator passed; this is not semantic entailment.",
+    "table_question_accuracy": "Normalized answer-match rate restricted to answerable table questions.",
+    "normalized_answer_match_rate": "Answerable questions whose non-abstaining answer contains a normalized accepted alternative or all meaningful alternative tokens.",
+    "supported_non_abstention_rate": "Answerable questions for which the model did not abstain.",
+    "answerability_decision_accuracy": "Questions with the correct answerable/non-abstaining or unsupported/abstaining decision.",
+    "unsupported_abstention_accuracy": "Unsupported questions returning a nonempty structural abstention with no claims.",
+    "precise_provenance_availability_rate": "Supported answers with cited evidence backed by a stored page and complete bounding box."
+  },
+  "question_counts": {
+    "total": 14,
+    "answerable": 12,
+    "unsupported": 2,
+    "pipeline_cases": 28
+  },
+  "pipeline_summaries": {
+    "baseline": {
+      "answer": {
+        "table_question_accuracy": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "normalized_answer_match_rate": {
+          "value": 0.833333,
+          "numerator": 10,
+          "denominator": 12
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 33974,
+        "total_chat_input_tokens": 32537,
+        "total_chat_output_tokens": 1437,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 11,
+          "denominator": 11
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 11,
+          "denominator": 11
+        },
+        "precise_provenance_availability_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 11
+        }
+      },
+      "retrieval": {
+        "mrr": {
+          "value": 0.666667,
+          "denominator": 12
+        },
+        "recall_at_1": {
+          "value": 0.416667,
+          "numerator": 5,
+          "denominator": 12
+        },
+        "recall_at_3": {
+          "value": 0.916667,
+          "numerator": 11,
+          "denominator": 12
+        },
+        "recall_at_5": {
+          "value": 0.916667,
+          "numerator": 11,
+          "denominator": 12
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 1
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 0.916667,
+          "numerator": 11,
+          "denominator": 12
+        },
+        "answerability_decision_accuracy": {
+          "value": 0.928571,
+          "numerator": 13,
+          "denominator": 14
+        },
+        "unsupported_abstention_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 6508.0,
+          "mean": 3178.5,
+          "count": 14,
+          "median": 2581.5
+        },
+        "retrieval": {
+          "p95": 2219.0,
+          "mean": 496.43,
+          "count": 14,
+          "median": 348.0
+        },
+        "generation": {
+          "p95": 5141.0,
+          "mean": 2659.57,
+          "count": 14,
+          "median": 2062.5
+        }
+      },
+      "question_count": 14,
+      "answerable_count": 12,
+      "unsupported_count": 2,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    "docling_standard": {
+      "answer": {
+        "table_question_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 12,
+          "denominator": 12
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 15325,
+        "total_chat_input_tokens": 13951,
+        "total_chat_output_tokens": 1374,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 495.21
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 0.916667,
+          "numerator": 11,
+          "denominator": 12
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 12,
+          "denominator": 12
+        },
+        "precise_provenance_availability_rate": {
+          "value": 1.0,
+          "numerator": 12,
+          "denominator": 12
+        }
+      },
+      "retrieval": {
+        "mrr": {
+          "value": 0.836111,
+          "denominator": 12
+        },
+        "recall_at_1": {
+          "value": 0.75,
+          "numerator": 9,
+          "denominator": 12
+        },
+        "recall_at_3": {
+          "value": 0.916667,
+          "numerator": 11,
+          "denominator": 12
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 12,
+          "denominator": 12
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 12,
+          "denominator": 12
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 14,
+          "denominator": 14
+        },
+        "unsupported_abstention_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 4198.0,
+          "mean": 2959.57,
+          "count": 14,
+          "median": 2761.5
+        },
+        "retrieval": {
+          "p95": 948.0,
+          "mean": 451.29,
+          "count": 14,
+          "median": 435.5
+        },
+        "generation": {
+          "p95": 3918.0,
+          "mean": 2478.07,
+          "count": 14,
+          "median": 2268.0
+        }
+      },
+      "question_count": 14,
+      "answerable_count": 12,
+      "unsupported_count": 2,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    }
+  },
+  "category_summaries": [
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 2461,
+        "total_chat_input_tokens": 2326,
+        "total_chat_output_tokens": 135,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "precise_provenance_availability_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1
+        }
+      },
+      "pipeline": "baseline",
+      "retrieval": {
+        "mrr": {
+          "value": 1.0,
+          "denominator": 1
+        },
+        "recall_at_1": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 3261.0,
+          "mean": 3261.0,
+          "count": 1,
+          "median": 3261.0
+        },
+        "retrieval": {
+          "p95": 360.0,
+          "mean": 360.0,
+          "count": 1,
+          "median": 360.0
+        },
+        "generation": {
+          "p95": 2876.0,
+          "mean": 2876.0,
+          "count": 1,
+          "median": 2876.0
+        }
+      },
+      "expected_kind": "code",
+      "pipeline_label": "Baseline",
+      "question_count": 1,
+      "answerable_count": 1,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 2415,
+        "total_chat_input_tokens": 2324,
+        "total_chat_output_tokens": 91,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "precise_provenance_availability_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1
+        }
+      },
+      "pipeline": "baseline",
+      "retrieval": {
+        "mrr": {
+          "value": 0.5,
+          "denominator": 1
+        },
+        "recall_at_1": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2439.0,
+          "mean": 2439.0,
+          "count": 1,
+          "median": 2439.0
+        },
+        "retrieval": {
+          "p95": 341.0,
+          "mean": 341.0,
+          "count": 1,
+          "median": 341.0
+        },
+        "generation": {
+          "p95": 2077.0,
+          "mean": 2077.0,
+          "count": 1,
+          "median": 2077.0
+        }
+      },
+      "expected_kind": "list",
+      "pipeline_label": "Baseline",
+      "question_count": 1,
+      "answerable_count": 1,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 4810,
+        "total_chat_input_tokens": 4647,
+        "total_chat_output_tokens": 163,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "precise_provenance_availability_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 2
+        }
+      },
+      "pipeline": "baseline",
+      "retrieval": {
+        "mrr": {
+          "value": 0.75,
+          "denominator": 2
+        },
+        "recall_at_1": {
+          "value": 0.5,
+          "numerator": 1,
+          "denominator": 2
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2217.0,
+          "mean": 2200.0,
+          "count": 2,
+          "median": 2200.0
+        },
+        "retrieval": {
+          "p95": 355.0,
+          "mean": 288.5,
+          "count": 2,
+          "median": 288.5
+        },
+        "generation": {
+          "p95": 1942.0,
+          "mean": 1891.5,
+          "count": 2,
+          "median": 1891.5
+        }
+      },
+      "expected_kind": "picture",
+      "pipeline_label": "Baseline",
+      "question_count": 2,
+      "answerable_count": 2,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "normalized_answer_match_rate": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 9868,
+        "total_chat_input_tokens": 9307,
+        "total_chat_output_tokens": 561,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "precise_provenance_availability_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 4
+        }
+      },
+      "pipeline": "baseline",
+      "retrieval": {
+        "mrr": {
+          "value": 0.75,
+          "denominator": 4
+        },
+        "recall_at_1": {
+          "value": 0.5,
+          "numerator": 2,
+          "denominator": 4
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 6508.0,
+          "mean": 4934.5,
+          "count": 4,
+          "median": 5131.5
+        },
+        "retrieval": {
+          "p95": 2219.0,
+          "mean": 745.5,
+          "count": 4,
+          "median": 266.0
+        },
+        "generation": {
+          "p95": 5141.0,
+          "mean": 4163.25,
+          "count": 4,
+          "median": 4426.0
+        }
+      },
+      "expected_kind": "table",
+      "pipeline_label": "Baseline",
+      "question_count": 4,
+      "answerable_count": 4,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 9620,
+        "total_chat_input_tokens": 9288,
+        "total_chat_output_tokens": 332,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 3,
+          "denominator": 3
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 3,
+          "denominator": 3
+        },
+        "precise_provenance_availability_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 3
+        }
+      },
+      "pipeline": "baseline",
+      "retrieval": {
+        "mrr": {
+          "value": 0.5,
+          "denominator": 4
+        },
+        "recall_at_1": {
+          "value": 0.25,
+          "numerator": 1,
+          "denominator": 4
+        },
+        "recall_at_3": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "recall_at_5": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 1
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "answerability_decision_accuracy": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2662.0,
+          "mean": 2339.5,
+          "count": 4,
+          "median": 2362.0
+        },
+        "retrieval": {
+          "p95": 593.0,
+          "mean": 419.5,
+          "count": 4,
+          "median": 430.5
+        },
+        "generation": {
+          "p95": 2048.0,
+          "mean": 1898.5,
+          "count": 4,
+          "median": 1909.0
+        }
+      },
+      "expected_kind": "text",
+      "pipeline_label": "Baseline",
+      "question_count": 4,
+      "answerable_count": 4,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 4800,
+        "total_chat_input_tokens": 4645,
+        "total_chat_output_tokens": 155,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1913.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "citation_integrity_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "precise_provenance_availability_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "pipeline": "baseline",
+      "retrieval": {
+        "mrr": {
+          "value": null,
+          "denominator": 0
+        },
+        "recall_at_1": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "recall_at_3": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "recall_at_5": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "mean_actual_hit_count": 3.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "unsupported_abstention_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2838.0,
+          "mean": 2651.5,
+          "count": 2,
+          "median": 2651.5
+        },
+        "retrieval": {
+          "p95": 607.0,
+          "mean": 506.0,
+          "count": 2,
+          "median": 506.0
+        },
+        "generation": {
+          "p95": 2413.0,
+          "mean": 2125.5,
+          "count": 2,
+          "median": 2125.5
+        }
+      },
+      "expected_kind": "unsupported",
+      "pipeline_label": "Baseline",
+      "question_count": 2,
+      "answerable_count": 0,
+      "unsupported_count": 2,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 1716,
+        "total_chat_input_tokens": 1609,
+        "total_chat_output_tokens": 107,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 1065.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "precise_provenance_availability_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        }
+      },
+      "pipeline": "docling_standard",
+      "retrieval": {
+        "mrr": {
+          "value": 1.0,
+          "denominator": 1
+        },
+        "recall_at_1": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2932.0,
+          "mean": 2932.0,
+          "count": 1,
+          "median": 2932.0
+        },
+        "retrieval": {
+          "p95": 494.0,
+          "mean": 494.0,
+          "count": 1,
+          "median": 494.0
+        },
+        "generation": {
+          "p95": 2409.0,
+          "mean": 2409.0,
+          "count": 1,
+          "median": 2409.0
+        }
+      },
+      "expected_kind": "code",
+      "pipeline_label": "Docling standard",
+      "question_count": 1,
+      "answerable_count": 1,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 889,
+        "total_chat_input_tokens": 818,
+        "total_chat_output_tokens": 71,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 330.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "precise_provenance_availability_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        }
+      },
+      "pipeline": "docling_standard",
+      "retrieval": {
+        "mrr": {
+          "value": 1.0,
+          "denominator": 1
+        },
+        "recall_at_1": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2196.0,
+          "mean": 2196.0,
+          "count": 1,
+          "median": 2196.0
+        },
+        "retrieval": {
+          "p95": 377.0,
+          "mean": 377.0,
+          "count": 1,
+          "median": 377.0
+        },
+        "generation": {
+          "p95": 1792.0,
+          "mean": 1792.0,
+          "count": 1,
+          "median": 1792.0
+        }
+      },
+      "expected_kind": "list",
+      "pipeline_label": "Docling standard",
+      "question_count": 1,
+      "answerable_count": 1,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 1740,
+        "total_chat_input_tokens": 1587,
+        "total_chat_output_tokens": 153,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 309.5
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "precise_provenance_availability_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "pipeline": "docling_standard",
+      "retrieval": {
+        "mrr": {
+          "value": 1.0,
+          "denominator": 2
+        },
+        "recall_at_1": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2650.0,
+          "mean": 2368.5,
+          "count": 2,
+          "median": 2368.5
+        },
+        "retrieval": {
+          "p95": 502.0,
+          "mean": 367.0,
+          "count": 2,
+          "median": 367.0
+        },
+        "generation": {
+          "p95": 2117.0,
+          "mean": 1969.0,
+          "count": 2,
+          "median": 1969.0
+        }
+      },
+      "expected_kind": "picture",
+      "pipeline_label": "Docling standard",
+      "question_count": 2,
+      "answerable_count": 2,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 6065,
+        "total_chat_input_tokens": 5509,
+        "total_chat_output_tokens": 556,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 841.5
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "precise_provenance_availability_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      },
+      "pipeline": "docling_standard",
+      "retrieval": {
+        "mrr": {
+          "value": 0.508333,
+          "denominator": 4
+        },
+        "recall_at_1": {
+          "value": 0.25,
+          "numerator": 1,
+          "denominator": 4
+        },
+        "recall_at_3": {
+          "value": 0.75,
+          "numerator": 3,
+          "denominator": 4
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 4198.0,
+          "mean": 3803.25,
+          "count": 4,
+          "median": 4098.0
+        },
+        "retrieval": {
+          "p95": 948.0,
+          "mean": 521.75,
+          "count": 4,
+          "median": 450.5
+        },
+        "generation": {
+          "p95": 3918.0,
+          "mean": 3249.25,
+          "count": 4,
+          "median": 3476.0
+        }
+      },
+      "expected_kind": "table",
+      "pipeline_label": "Docling standard",
+      "question_count": 4,
+      "answerable_count": 4,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 3395,
+        "total_chat_input_tokens": 3029,
+        "total_chat_output_tokens": 366,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 277.75
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "citation_integrity_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "precise_provenance_availability_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      },
+      "pipeline": "docling_standard",
+      "retrieval": {
+        "mrr": {
+          "value": 1.0,
+          "denominator": 4
+        },
+        "recall_at_1": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "recall_at_3": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "recall_at_5": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        "unsupported_abstention_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 3421.0,
+          "mean": 2943.0,
+          "count": 4,
+          "median": 2902.5
+        },
+        "retrieval": {
+          "p95": 591.0,
+          "mean": 351.25,
+          "count": 4,
+          "median": 293.0
+        },
+        "generation": {
+          "p95": 3050.0,
+          "mean": 2563.25,
+          "count": 4,
+          "median": 2639.5
+        }
+      },
+      "expected_kind": "text",
+      "pipeline_label": "Docling standard",
+      "question_count": 4,
+      "answerable_count": 4,
+      "unsupported_count": 0,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    },
+    {
+      "answer": {
+        "table_question_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "normalized_answer_match_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "tokens": {
+        "total_chat_tokens": 1520,
+        "total_chat_input_tokens": 1399,
+        "total_chat_output_tokens": 121,
+        "validation_repair_attempt_count": 0,
+        "mean_evidence_tokens_per_question": 221.0
+      },
+      "citation": {
+        "citation_page_accuracy": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "citation_integrity_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "precise_provenance_availability_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "pipeline": "docling_standard",
+      "retrieval": {
+        "mrr": {
+          "value": null,
+          "denominator": 0
+        },
+        "recall_at_1": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "recall_at_3": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "recall_at_5": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "mean_actual_hit_count": 5.0,
+        "representation_miss_count": 0
+      },
+      "abstention": {
+        "supported_non_abstention_rate": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0
+        },
+        "answerability_decision_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        },
+        "unsupported_abstention_accuracy": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2
+        }
+      },
+      "latency_ms": {
+        "total": {
+          "p95": 2458.0,
+          "mean": 2292.0,
+          "count": 2,
+          "median": 2292.0
+        },
+        "retrieval": {
+          "p95": 613.0,
+          "mean": 610.5,
+          "count": 2,
+          "median": 610.5
+        },
+        "generation": {
+          "p95": 1813.0,
+          "mean": 1652.0,
+          "count": 2,
+          "median": 1652.0
+        }
+      },
+      "expected_kind": "unsupported",
+      "pipeline_label": "Docling standard",
+      "question_count": 2,
+      "answerable_count": 0,
+      "unsupported_count": 2,
+      "case_failure_count": 0,
+      "provider_failure_count": 0
+    }
+  ],
+  "per_question_results": [
+    {
+      "question_id": "Q01",
+      "pipeline": "baseline",
+      "expected_kind": "table",
+      "question": "What verification method is specified for REQ-204?",
+      "answerable": true,
+      "expected_pages": [
+        4
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "REQ-204 is verified by a Test method, specifically an end-to-end telemetry test for the communications subsystem.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 2219,
+      "generation_duration_ms": 4259,
+      "total_duration_ms": 6508,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2326,
+      "model_output_tokens": 140,
+      "model_total_tokens": 2466,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q01",
+      "pipeline": "docling_standard",
+      "expected_kind": "table",
+      "question": "What verification method is specified for REQ-204?",
+      "answerable": true,
+      "expected_pages": [
+        4
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The specified verification method for REQ-204 is **Test**.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        4
+      ],
+      "retrieval_duration_ms": 659,
+      "generation_duration_ms": 2127,
+      "total_duration_ms": 2819,
+      "evidence_token_count": 927,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 5,
+      "model_input_tokens": 1468,
+      "model_output_tokens": 84,
+      "model_total_tokens": 1552,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q02",
+      "pipeline": "baseline",
+      "expected_kind": "table",
+      "question": "Which subsystem owns REQ-205 and how is it verified?",
+      "answerable": true,
+      "expected_pages": [
+        4
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "REQ-205 is owned by the Guidance group and is verified by Analysis, specifically by acceptance of the covariance analysis.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": false,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 249,
+      "generation_duration_ms": 4593,
+      "total_duration_ms": 4866,
+      "evidence_token_count": 1913,
+      "result_status": "fail",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2328,
+      "model_output_tokens": 181,
+      "model_total_tokens": 2509,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": "answer mismatch"
+    },
+    {
+      "question_id": "Q02",
+      "pipeline": "docling_standard",
+      "expected_kind": "table",
+      "question": "Which subsystem owns REQ-205 and how is it verified?",
+      "answerable": true,
+      "expected_pages": [
+        4
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "REQ-205 belongs to the Navigation subsystem and is verified by Analysis, with Guidance as the verification owner.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        4
+      ],
+      "retrieval_duration_ms": 242,
+      "generation_duration_ms": 3918,
+      "total_duration_ms": 4198,
+      "evidence_token_count": 850,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 1392,
+      "model_output_tokens": 175,
+      "model_total_tokens": 1567,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q03",
+      "pipeline": "baseline",
+      "expected_kind": "table",
+      "question": "What thermal margin threshold is required by REQ-207?",
+      "answerable": true,
+      "expected_pages": [
+        5
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "REQ-207 requires a thermal margin threshold of 18 percent.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 231,
+      "generation_duration_ms": 5141,
+      "total_duration_ms": 5397,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2327,
+      "model_output_tokens": 133,
+      "model_total_tokens": 2460,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q03",
+      "pipeline": "docling_standard",
+      "expected_kind": "table",
+      "question": "What thermal margin threshold is required by REQ-207?",
+      "answerable": true,
+      "expected_pages": [
+        5
+      ],
+      "first_relevant_rank": 3,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "REQ-207 requires a minimum thermal margin threshold of 18 percent.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": false,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        5,
+        9
+      ],
+      "retrieval_duration_ms": 948,
+      "generation_duration_ms": 3174,
+      "total_duration_ms": 4150,
+      "evidence_token_count": 988,
+      "result_status": "fail",
+      "reciprocal_rank": 0.3333333333333333,
+      "actual_hit_count": 5,
+      "model_input_tokens": 1532,
+      "model_output_tokens": 127,
+      "model_total_tokens": 1659,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": "strict citation-page mismatch"
+    },
+    {
+      "question_id": "Q04",
+      "pipeline": "baseline",
+      "expected_kind": "table",
+      "question": "What is the readiness status of REQ-209?",
+      "answerable": true,
+      "expected_pages": [
+        5
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "REQ-209 has a readiness status of **Conditional**. [E2]",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 283,
+      "generation_duration_ms": 2660,
+      "total_duration_ms": 2967,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2326,
+      "model_output_tokens": 107,
+      "model_total_tokens": 2433,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q04",
+      "pipeline": "docling_standard",
+      "expected_kind": "table",
+      "question": "What is the readiness status of REQ-209?",
+      "answerable": true,
+      "expected_pages": [
+        5
+      ],
+      "first_relevant_rank": 5,
+      "recall_at_1": false,
+      "recall_at_3": false,
+      "recall_at_5": true,
+      "answer": "REQ-209 has a readiness status of **Conditional**.\n\nThis is shown in the verification matrix, where REQ-209 (Navigation, Verification Method = Demonstration, Owner = Guidance) is listed with `Readiness.Status = Conditional` and a readiness criterion of `Recovery retest pending`.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        5,
+        6
+      ],
+      "retrieval_duration_ms": 238,
+      "generation_duration_ms": 3778,
+      "total_duration_ms": 4046,
+      "evidence_token_count": 601,
+      "result_status": "pass",
+      "reciprocal_rank": 0.2,
+      "actual_hit_count": 5,
+      "model_input_tokens": 1117,
+      "model_output_tokens": 170,
+      "model_total_tokens": 1287,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q05",
+      "pipeline": "baseline",
+      "expected_kind": "list",
+      "question": "How much scheduled maintenance is permitted each quarter?",
+      "answerable": true,
+      "expected_pages": [
+        3
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "Scheduled maintenance is limited to a maximum of four hours per quarter.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "retrieval_duration_ms": 341,
+      "generation_duration_ms": 2077,
+      "total_duration_ms": 2439,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2324,
+      "model_output_tokens": 91,
+      "model_total_tokens": 2415,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q05",
+      "pipeline": "docling_standard",
+      "expected_kind": "list",
+      "question": "How much scheduled maintenance is permitted each quarter?",
+      "answerable": true,
+      "expected_pages": [
+        3
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "Scheduled maintenance is limited to four hours per quarter.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        3
+      ],
+      "retrieval_duration_ms": 377,
+      "generation_duration_ms": 1792,
+      "total_duration_ms": 2196,
+      "evidence_token_count": 330,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 818,
+      "model_output_tokens": 71,
+      "model_total_tokens": 889,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q06",
+      "pipeline": "baseline",
+      "expected_kind": "picture",
+      "question": "What readiness percentage was achieved in Q4?",
+      "answerable": true,
+      "expected_pages": [
+        6
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The Q4 readiness value achieved was 92 percent.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 222,
+      "generation_duration_ms": 1942,
+      "total_duration_ms": 2183,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2324,
+      "model_output_tokens": 87,
+      "model_total_tokens": 2411,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q06",
+      "pipeline": "docling_standard",
+      "expected_kind": "picture",
+      "question": "What readiness percentage was achieved in Q4?",
+      "answerable": true,
+      "expected_pages": [
+        6
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The Q4 readiness percentage achieved was 92%. [E1]",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        6
+      ],
+      "retrieval_duration_ms": 502,
+      "generation_duration_ms": 2117,
+      "total_duration_ms": 2650,
+      "evidence_token_count": 293,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 779,
+      "model_output_tokens": 86,
+      "model_total_tokens": 865,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q07",
+      "pipeline": "baseline",
+      "expected_kind": "picture",
+      "question": "Where does the Sensor Gateway send telemetry?",
+      "answerable": true,
+      "expected_pages": [
+        7
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The Sensor Gateway sends telemetry to the Validation Service.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 355,
+      "generation_duration_ms": 1841,
+      "total_duration_ms": 2217,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2323,
+      "model_output_tokens": 76,
+      "model_total_tokens": 2399,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q07",
+      "pipeline": "docling_standard",
+      "expected_kind": "picture",
+      "question": "Where does the Sensor Gateway send telemetry?",
+      "answerable": true,
+      "expected_pages": [
+        7
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The Sensor Gateway sends telemetry to the Validation Service.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        7
+      ],
+      "retrieval_duration_ms": 232,
+      "generation_duration_ms": 1821,
+      "total_duration_ms": 2087,
+      "evidence_token_count": 326,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 808,
+      "model_output_tokens": 67,
+      "model_total_tokens": 875,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q08",
+      "pipeline": "baseline",
+      "expected_kind": "text",
+      "question": "What recovery window is stated in the scanned appendix?",
+      "answerable": true,
+      "expected_pages": [
+        8
+      ],
+      "first_relevant_rank": null,
+      "recall_at_1": false,
+      "recall_at_3": false,
+      "recall_at_5": false,
+      "answer": "The supplied evidence does not include the contents of the scanned appendix (page 8), so the stated recovery window cannot be determined from the available material.",
+      "insufficient_evidence": true,
+      "normalized_answer_match": false,
+      "citation_integrity_valid": null,
+      "citation_page_correct": null,
+      "precise_provenance_available": null,
+      "cited_pages": [],
+      "retrieval_duration_ms": 278,
+      "generation_duration_ms": 1920,
+      "total_duration_ms": 2223,
+      "evidence_token_count": 1913,
+      "result_status": "fail",
+      "reciprocal_rank": 0.0,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2325,
+      "model_output_tokens": 81,
+      "model_total_tokens": 2406,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": false,
+      "ingestion_or_representation_miss": true,
+      "result_note": "representation miss; answer mismatch"
+    },
+    {
+      "question_id": "Q08",
+      "pipeline": "docling_standard",
+      "expected_kind": "text",
+      "question": "What recovery window is stated in the scanned appendix?",
+      "answerable": true,
+      "expected_pages": [
+        8
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The scanned appendix states a maximum recovery window of 15 minutes.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        8
+      ],
+      "retrieval_duration_ms": 242,
+      "generation_duration_ms": 2830,
+      "total_duration_ms": 3101,
+      "evidence_token_count": 410,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 891,
+      "model_output_tokens": 85,
+      "model_total_tokens": 976,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q09",
+      "pipeline": "baseline",
+      "expected_kind": "text",
+      "question": "What is the document identifier?",
+      "answerable": true,
+      "expected_pages": [
+        1
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The document identifier is **AUR-MRA-001**.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "retrieval_duration_ms": 224,
+      "generation_duration_ms": 1728,
+      "total_duration_ms": 1972,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2321,
+      "model_output_tokens": 79,
+      "model_total_tokens": 2400,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q09",
+      "pipeline": "docling_standard",
+      "expected_kind": "text",
+      "question": "What is the document identifier?",
+      "answerable": true,
+      "expected_pages": [
+        1
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The document identifier is AUR-MRA-001.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        1
+      ],
+      "retrieval_duration_ms": 344,
+      "generation_duration_ms": 3050,
+      "total_duration_ms": 3421,
+      "evidence_token_count": 307,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 787,
+      "model_output_tokens": 130,
+      "model_total_tokens": 917,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q10",
+      "pipeline": "baseline",
+      "expected_kind": "text",
+      "question": "What revision is this assessment?",
+      "answerable": true,
+      "expected_pages": [
+        1
+      ],
+      "first_relevant_rank": 2,
+      "recall_at_1": false,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "This assessment is Revision C of document AUR-MRA-001.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "retrieval_duration_ms": 583,
+      "generation_duration_ms": 1898,
+      "total_duration_ms": 2501,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 0.5,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2321,
+      "model_output_tokens": 87,
+      "model_total_tokens": 2408,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q10",
+      "pipeline": "docling_standard",
+      "expected_kind": "text",
+      "question": "What revision is this assessment?",
+      "answerable": true,
+      "expected_pages": [
+        1
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The assessment is Revision C.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        1
+      ],
+      "retrieval_duration_ms": 591,
+      "generation_duration_ms": 1924,
+      "total_duration_ms": 2546,
+      "evidence_token_count": 203,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 682,
+      "model_output_tokens": 66,
+      "model_total_tokens": 748,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q11",
+      "pipeline": "baseline",
+      "expected_kind": "text",
+      "question": "When was the assessment released?",
+      "answerable": true,
+      "expected_pages": [
+        1
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The assessment was released on August 28, 2026.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "retrieval_duration_ms": 593,
+      "generation_duration_ms": 2048,
+      "total_duration_ms": 2662,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2321,
+      "model_output_tokens": 85,
+      "model_total_tokens": 2406,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q11",
+      "pipeline": "docling_standard",
+      "expected_kind": "text",
+      "question": "When was the assessment released?",
+      "answerable": true,
+      "expected_pages": [
+        1
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The assessment was released on August 28, 2026.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        1
+      ],
+      "retrieval_duration_ms": 228,
+      "generation_duration_ms": 2449,
+      "total_duration_ms": 2704,
+      "evidence_token_count": 191,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 669,
+      "model_output_tokens": 85,
+      "model_total_tokens": 754,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q12",
+      "pipeline": "baseline",
+      "expected_kind": "code",
+      "question": "Which requirement identifier appears in the thermal-margin code sample?",
+      "answerable": true,
+      "expected_pages": [
+        9
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The thermal-margin code sample uses the requirement identifier **REQ-207**.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": false,
+      "cited_pages": [
+        9,
+        10
+      ],
+      "retrieval_duration_ms": 360,
+      "generation_duration_ms": 2876,
+      "total_duration_ms": 3261,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2326,
+      "model_output_tokens": 135,
+      "model_total_tokens": 2461,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q12",
+      "pipeline": "docling_standard",
+      "expected_kind": "code",
+      "question": "Which requirement identifier appears in the thermal-margin code sample?",
+      "answerable": true,
+      "expected_pages": [
+        9
+      ],
+      "first_relevant_rank": 1,
+      "recall_at_1": true,
+      "recall_at_3": true,
+      "recall_at_5": true,
+      "answer": "The requirement identifier that appears in the thermal-margin code sample is **REQ-207**.",
+      "insufficient_evidence": false,
+      "normalized_answer_match": true,
+      "citation_integrity_valid": true,
+      "citation_page_correct": true,
+      "precise_provenance_available": true,
+      "cited_pages": [
+        9
+      ],
+      "retrieval_duration_ms": 494,
+      "generation_duration_ms": 2409,
+      "total_duration_ms": 2932,
+      "evidence_token_count": 1065,
+      "result_status": "pass",
+      "reciprocal_rank": 1.0,
+      "actual_hit_count": 5,
+      "model_input_tokens": 1609,
+      "model_output_tokens": 107,
+      "model_total_tokens": 1716,
+      "structural_abstention_correct": null,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q13",
+      "pipeline": "baseline",
+      "expected_kind": "unsupported",
+      "question": "What was the contract award date?",
+      "answerable": false,
+      "expected_pages": [],
+      "first_relevant_rank": null,
+      "recall_at_1": null,
+      "recall_at_3": null,
+      "recall_at_5": null,
+      "answer": "The supplied evidence does not state the contract award date, so this information cannot be determined from the documents provided.",
+      "insufficient_evidence": true,
+      "normalized_answer_match": null,
+      "citation_integrity_valid": null,
+      "citation_page_correct": null,
+      "precise_provenance_available": null,
+      "cited_pages": [],
+      "retrieval_duration_ms": 607,
+      "generation_duration_ms": 1838,
+      "total_duration_ms": 2465,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": null,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2322,
+      "model_output_tokens": 72,
+      "model_total_tokens": 2394,
+      "structural_abstention_correct": true,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q13",
+      "pipeline": "docling_standard",
+      "expected_kind": "unsupported",
+      "question": "What was the contract award date?",
+      "answerable": false,
+      "expected_pages": [],
+      "first_relevant_rank": null,
+      "recall_at_1": null,
+      "recall_at_3": null,
+      "recall_at_5": null,
+      "answer": "The contract award date is not provided in the supplied evidence, so I cannot determine it from these documents.",
+      "insufficient_evidence": true,
+      "normalized_answer_match": null,
+      "citation_integrity_valid": null,
+      "citation_page_correct": null,
+      "precise_provenance_available": null,
+      "cited_pages": [],
+      "retrieval_duration_ms": 608,
+      "generation_duration_ms": 1491,
+      "total_duration_ms": 2126,
+      "evidence_token_count": 260,
+      "result_status": "pass",
+      "reciprocal_rank": null,
+      "actual_hit_count": 5,
+      "model_input_tokens": 739,
+      "model_output_tokens": 61,
+      "model_total_tokens": 800,
+      "structural_abstention_correct": true,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q14",
+      "pipeline": "baseline",
+      "expected_kind": "unsupported",
+      "question": "Who is the program's chief executive?",
+      "answerable": false,
+      "expected_pages": [],
+      "first_relevant_rank": null,
+      "recall_at_1": null,
+      "recall_at_3": null,
+      "recall_at_5": null,
+      "answer": "The supplied evidence does not identify the program’s chief executive. This information is explicitly outside the scope of the provided document, which notes that it does not include executive biographies or similar personnel details.",
+      "insufficient_evidence": true,
+      "normalized_answer_match": null,
+      "citation_integrity_valid": null,
+      "citation_page_correct": null,
+      "precise_provenance_available": null,
+      "cited_pages": [],
+      "retrieval_duration_ms": 405,
+      "generation_duration_ms": 2413,
+      "total_duration_ms": 2838,
+      "evidence_token_count": 1913,
+      "result_status": "pass",
+      "reciprocal_rank": null,
+      "actual_hit_count": 3,
+      "model_input_tokens": 2323,
+      "model_output_tokens": 83,
+      "model_total_tokens": 2406,
+      "structural_abstention_correct": true,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    },
+    {
+      "question_id": "Q14",
+      "pipeline": "docling_standard",
+      "expected_kind": "unsupported",
+      "question": "Who is the program's chief executive?",
+      "answerable": false,
+      "expected_pages": [],
+      "first_relevant_rank": null,
+      "recall_at_1": null,
+      "recall_at_3": null,
+      "recall_at_5": null,
+      "answer": "The supplied evidence does not identify the program’s chief executive. This information is not present in the provided documents.",
+      "insufficient_evidence": true,
+      "normalized_answer_match": null,
+      "citation_integrity_valid": null,
+      "citation_page_correct": null,
+      "precise_provenance_available": null,
+      "cited_pages": [],
+      "retrieval_duration_ms": 613,
+      "generation_duration_ms": 1813,
+      "total_duration_ms": 2458,
+      "evidence_token_count": 182,
+      "result_status": "pass",
+      "reciprocal_rank": null,
+      "actual_hit_count": 5,
+      "model_input_tokens": 660,
+      "model_output_tokens": 60,
+      "model_total_tokens": 720,
+      "structural_abstention_correct": true,
+      "answerability_decision_correct": true,
+      "ingestion_or_representation_miss": false,
+      "result_note": ""
+    }
+  ],
+  "limitations": [
+    "One synthetic 10-page document and one evaluation pass; results are descriptive, not a universal parser ranking.",
+    "The Baseline index contains only 3 broad chunks, so Recall@5 is less discriminating.",
+    "Citation integrity validates supplied IDs and structure; it does not prove semantic entailment.",
+    "Precise provenance supports verification but does not eliminate hallucination.",
+    "Docling heading reconstruction and some vertical table merges were imperfect.",
+    "Picture descriptions were generic derived retrieval aids, not verbatim source evidence.",
+    "Header repetition was configured but not exercised because production table chunks fit under 800 tokens.",
+    "Docling CPU conversion was slow for this quality profile.",
+    "Granite-Docling-258M was intentionally not evaluated."
+  ]
+}

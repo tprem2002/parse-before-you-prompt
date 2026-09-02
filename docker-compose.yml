@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pbtp-postgres
+    environment:
+      POSTGRES_DB: parse_prompt
+      POSTGRES_USER: parse_prompt
+      POSTGRES_PASSWORD: parse_prompt
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  chroma:
+    image: chromadb/chroma:1.5.9
+    container_name: pbtp-chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/chroma:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
