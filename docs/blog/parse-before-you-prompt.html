@@ -1,83 +1,622 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <meta name="description" content="A controlled comparison showing how document representation affects retrieval, answers, and provenance in RAG.">
-  <title>Parse Before You Prompt · Continuum Field Notes</title>
-  <style>
-    :root{--bg:#f4f7fb;--paper:#fff;--ink:#132238;--muted:#607089;--line:#d9e2ec;--navy:#102a43;--cyan:#00a6c7;--teal:#14b8a6;--violet:#7667d8;--shadow:0 20px 55px rgba(16,42,67,.11)}
-    @media(prefers-color-scheme:dark){:root{--bg:#091522;--paper:#102235;--ink:#edf6ff;--muted:#aabbd0;--line:#294158;--navy:#eaf4ff;--shadow:0 20px 55px rgba(0,0,0,.3)}}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.72 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--cyan)}img{display:block;width:100%;height:auto;border-radius:14px}nav{position:sticky;top:0;z-index:4;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(14px)}.nav{max-width:1160px;margin:auto;padding:13px 24px;display:flex;justify-content:space-between;align-items:center}.brand{font-size:.82rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.nav a{text-decoration:none;color:var(--muted);font-size:.82rem}.hero{background:linear-gradient(135deg,#0b263d 0%,#103c57 52%,#183b64 100%);color:#fff;overflow:hidden}.hero-inner{max-width:1160px;margin:auto;padding:82px 24px 72px;display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}.kicker{text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;font-weight:800;color:#75e5f4}.hero h1{font-size:clamp(3.2rem,7vw,6.6rem);line-height:.88;letter-spacing:-.065em;margin:.2em 0}.hero h1 span{background:linear-gradient(90deg,#65e1f1,#9a8cff);-webkit-background-clip:text;background-clip:text;color:transparent}.dek{max-width:740px;color:#d3e4f2;font-size:1.2rem}.stamp{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);border-radius:24px;padding:26px}.stamp strong{display:block;font-size:3.4rem;line-height:1;color:#71e2ef}.stamp span{display:block;color:#c8d8e7;margin-top:8px}.meta{display:flex;gap:16px;flex-wrap:wrap;color:#b9cddd;font-size:.85rem}.shell{max-width:1160px;margin:auto;padding:54px 24px 90px}.lead{font:650 clamp(1.45rem,3vw,2.15rem)/1.35 Georgia,serif;max-width:880px;margin:0 auto 64px;padding-left:28px;border-left:5px solid var(--cyan)}section{max-width:900px;margin:0 auto 82px;scroll-margin-top:80px}h2{font-size:clamp(2rem,4vw,3.25rem);line-height:1.08;letter-spacing:-.04em;margin:.2em 0 .55em}.section-no{font-size:.74rem;text-transform:uppercase;letter-spacing:.14em;font-weight:850;color:var(--teal)}.facts,.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:21px;box-shadow:var(--shadow)}.card strong{font-size:1.9rem;display:block;line-height:1.1;color:var(--teal)}.card small{color:var(--muted)}figure{margin:36px 0}.caption{font-size:.8rem;color:var(--muted);margin-top:10px}.chart{background:#fff;border:1px solid var(--line);padding:10px;border-radius:18px;box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;background:var(--paper);font-size:.88rem;border:1px solid var(--line)}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{background:color-mix(in srgb,var(--paper) 80%,var(--cyan) 20%)}.callout{border-radius:18px;padding:28px;background:linear-gradient(135deg,color-mix(in srgb,var(--paper) 90%,var(--cyan) 10%),color-mix(in srgb,var(--paper) 92%,var(--violet) 8%));border:1px solid var(--line)}.boundary{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:30px 0}.boundary .card strong{font-size:1rem}.arrow{align-self:center;color:var(--cyan);font-size:2rem}.limits{columns:2;column-gap:34px}.limits li{break-inside:avoid;margin-bottom:12px}.sources{font-size:.84rem;color:var(--muted)}footer{border-top:1px solid var(--line);padding:28px 24px;color:var(--muted);font-size:.8rem}.footer{max-width:1160px;margin:auto;display:flex;justify-content:space-between;gap:20px}.skip{position:absolute;left:-9999px}.skip:focus{left:12px;top:12px;background:#fff;color:#000;padding:10px;z-index:9}
-    @media(max-width:760px){.hero-inner{grid-template-columns:1fr}.facts,.metrics{grid-template-columns:1fr 1fr}.boundary{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}.limits{columns:1}.footer{display:block}.nav a{display:none}}
-    @media print{nav{display:none}.hero{background:#fff!important;color:#000}.hero .dek,.hero .meta{color:#333}.stamp{border:1px solid #bbb}.stamp strong{color:#000}.shell{padding-top:30px}section,figure,.card{break-inside:avoid}.chart{box-shadow:none}a{color:#000;text-decoration:none}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A controlled experiment showing how Docling document intelligence changes RAG retrieval, answer quality, and provenance.">
+<title>Parse Before You Prompt · Continuum Field Notes</title>
+<style>
+
+:root{
+  --bg:#04070b;
+  --bg-2:#070c13;
+  --panel:#09111d;
+  --panel-2:#0b1523;
+  --panel-3:#0c1826;
+  --text:#edf4f1;
+  --muted:#9fb1ad;
+  --muted-2:#7f918d;
+  --line:#1c2b25;
+  --line-2:#274038;
+  --green:#8fd43f;
+  --green-2:#78c83c;
+  --green-soft:#1a2b14;
+  --teal:#7fd8c0;
+  --teal-soft:#0e3c33;
+  --blue-soft:#0e2138;
+  --paper:#ffffff;
+  --shadow:0 12px 34px rgba(0,0,0,.28);
+  --wide:1180px;
+  --article:860px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top center, rgba(21,43,27,.18), transparent 34%),
+    linear-gradient(180deg,#05080c 0%, #04070b 100%);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--teal);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:#b8f2df}
+code,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+code{
+  font-size:.91em;
+  background:#0b1621;
+  border:1px solid #1e3144;
+  color:#d6ebff;
+  padding:.08em .32em;
+  border-radius:5px
+}
+img{max-width:100%}
+.sitebar{
+  border-bottom:1px solid #16251f;
+  background:rgba(4,7,11,.95);
+  backdrop-filter: blur(6px);
+  position:sticky;top:0;z-index:10;
+}
+.sitebar-inner{
+  max-width:var(--wide);margin:auto;padding:14px 24px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+}
+.brand{
+  font-size:.73rem;font-weight:820;letter-spacing:.14em;text-transform:uppercase;color:#dfe8e3;
+}
+.sitebar nav{font-size:.8rem;color:#9bb4ab;display:flex;gap:22px}
+.sitebar nav a{color:inherit;text-decoration:none}
+.sitebar nav a:hover{color:#dff7ea}
+.hero{
+  max-width:var(--wide);
+  margin:0 auto;
+  padding:42px 24px 24px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 340px;
+  gap:30px;
+  align-items:start;
+  position:relative;
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(rgba(136,212,63,.08), rgba(136,212,63,.08)),
+    repeating-linear-gradient(90deg, transparent 0, transparent 27px, rgba(118,185,58,.08) 28px),
+    repeating-linear-gradient(0deg, transparent 0, transparent 27px, rgba(118,185,58,.08) 28px);
+  opacity:.32;
+  pointer-events:none;
+}
+.hero > *{position:relative;z-index:1}
+.eyebrow{
+  color:var(--green);
+  font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:820;margin-bottom:8px;
+}
+.hero h1{
+  font-size:clamp(2.25rem,4.3vw,3.8rem);
+  line-height:1.02;letter-spacing:-.05em;margin:0 0 18px;max-width:760px;font-weight:780;
+  color:#f2f6f4;
+  margin:0 0 12px;
+}
+.dek{
+  font-size:1.12rem;line-height:1.48;color:#b8c8c3;max-width:720px;margin:0 0 14px;
+}
+.byline{font-size:.79rem;color:#9ab0a8;display:flex;gap:10px;flex-wrap:wrap}
+.hero-card{
+  border:1px solid #36592e;
+  background:linear-gradient(180deg, rgba(11,18,31,.92), rgba(10,17,29,.98));
+  border-radius:18px;padding:18px 18px 16px;
+  box-shadow:var(--shadow);
+}
+.hero-card .label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green);font-weight:820}
+.hero-card strong{display:block;font-size:1rem;margin:6px 0 10px;color:#f0f6f3}
+.hero-card ul{margin:0;padding-left:18px;color:#afc1bc;font-size:.77rem}
+.hero-card li{margin:4px 0}
+.summary-wrap{
+  background:linear-gradient(180deg,#060a10 0%, #060d14 100%);
+  border-top:1px solid #17261f;border-bottom:1px solid #17261f;
+}
+.summary{
+  max-width:var(--wide);margin:auto;padding:30px 24px 34px;
+}
+.summary-top{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:18px}
+.summary h2{font-size:1.26rem;margin:0;letter-spacing:-.02em;color:#f0f6f3}
+.summary-meta{font-size:.72rem;color:#8da29a}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sum-card{
+  border:1px solid #22382f;border-radius:12px;padding:16px;
+  background:linear-gradient(180deg, rgba(12,24,38,.72), rgba(9,17,29,.92));
+  box-shadow:var(--shadow);
+}
+.sum-card span{display:block;color:var(--green);font-size:.64rem;text-transform:uppercase;letter-spacing:.11em;font-weight:820;margin-bottom:6px}
+.sum-card strong{font-size:.94rem;line-height:1.35;display:block;color:#eff5f2}
+.sum-card p{font-size:.75rem;color:#9eb0ab;margin:7px 0 0;line-height:1.5}
+.thesis{
+  margin-top:16px;border-left:3px solid var(--green);padding:10px 0 10px 15px;color:#e6f0ed;font-size:.9rem;
+  background:rgba(143,212,63,.04)
+}
+.article{max-width:var(--article);margin:auto;padding:56px 24px 82px}
+.section{margin:0 0 62px;padding-bottom:18px;border-bottom:1px solid #122019}
+.section:last-of-type{border-bottom:none}
+.section-label{
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green);font-weight:840;margin-bottom:8px;
+}
+h2{font-size:clamp(1.38rem,2.45vw,1.92rem);line-height:1.18;letter-spacing:-.032em;margin:0 0 16px;color:#f1f6f4}
+h3{font-size:1rem;margin:22px 0 10px;color:#f1f5f3}
+p{margin:0 0 17px;color:#d7e2de}
+.lede{font-size:1.04rem;color:#c9d6d1}
+.control{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;
+}
+.branch{
+  border:1px solid #24362d;border-radius:14px;padding:18px;
+  background:linear-gradient(180deg, rgba(11,18,31,.9), rgba(9,17,29,.96));
+  box-shadow:var(--shadow)
+}
+.branch.docling{border-color:#355e30;background:linear-gradient(180deg, rgba(16,34,24,.68), rgba(10,20,18,.9))}
+.branch .tag{font-size:.62rem;text-transform:uppercase;letter-spacing:.11em;font-weight:850;color:#97aaa5}
+.branch.docling .tag{color:var(--green)}
+.branch h3{margin:4px 0 10px;font-size:1rem}
+.branch ul{margin:0;padding-left:18px;font-size:.78rem;color:#a9bbb6}
+.branch li{margin:5px 0}
+.same-strip{
+  border:1px solid #233730;background:linear-gradient(180deg, rgba(14,25,22,.8), rgba(9,16,17,.98));
+  border-radius:12px;padding:13px 15px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 20px;
+}
+.same-strip div{text-align:center;font-size:.72rem;color:#d8e5df;font-weight:700}
+.note{
+  font-size:.79rem;color:#a3b4af;padding:11px 13px;background:#09121b;border-left:3px solid var(--green);border-radius:0 8px 8px 0
+}
+.stack{
+  border:1px solid #22352d;border-radius:14px;padding:18px;margin:22px 0;background:linear-gradient(180deg, rgba(11,18,31,.9), rgba(9,17,29,.96))
+}
+.stack-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px}
+.node{
+  border:1px solid #263e34;background:#0a1320;border-radius:8px;padding:8px 10px;font-size:.7rem;font-weight:720;color:#d8e3df
+}
+.arrow{color:var(--green);font-weight:900}
+.storage{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.storage div{background:#0a1320;border:1px solid #22352d;border-radius:10px;padding:12px}
+.storage strong{display:block;font-size:.75rem;color:#eff5f2}
+.storage span{display:block;font-size:.69rem;color:#9eb0ab;margin-top:4px}
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}
+.model{border:1px solid #22352d;border-radius:11px;padding:13px;background:#0b1420}
+.model .mstage{font-size:.61rem;text-transform:uppercase;letter-spacing:.09em;color:var(--green);font-weight:850}
+.model strong{display:block;font-size:.78rem;margin:3px 0;color:#f1f6f4}
+.model p{font-size:.68rem;color:#9eb0ab;margin:0;line-height:1.45}
+.content-table,.results-table,.trade-table{
+  width:100%;border-collapse:collapse;font-size:.76rem;margin:22px 0;border:1px solid #22352d;
+  background:#0a1320
+}
+.content-table th,.results-table th,.trade-table th{
+  background:#0f1a14;color:var(--green);text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em
+}
+.content-table th,.content-table td,.results-table th,.results-table td,.trade-table th,.trade-table td{padding:10px 11px;border-bottom:1px solid #22352d;vertical-align:top}
+.results-table td:nth-child(n+2),.results-table th:nth-child(n+2){text-align:right}
+.good{color:#a8ea77;font-weight:850}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}
+.stat{
+  border:1px solid #2b443b;background:linear-gradient(180deg, rgba(16,34,24,.62), rgba(11,18,31,.96));
+  border-radius:11px;padding:14px
+}
+.stat strong{display:block;color:#eef6ef;font-size:1.25rem;line-height:1}
+.stat span{font-size:.66rem;color:#9eb0ab}
+.killer{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+.kbox{border:1px solid #23362d;border-radius:12px;padding:17px;background:#0a1320}
+.kbox.doc{background:linear-gradient(180deg, rgba(16,34,24,.62), rgba(11,18,31,.96));border-color:#355e30}
+.kbox .klabel{font-size:.61rem;text-transform:uppercase;letter-spacing:.1em;font-weight:850;color:#9aaea8}
+.kbox.doc .klabel{color:var(--green)}
+.kbox strong{display:block;font-size:.92rem;margin:5px 0;color:#f0f6f3}
+.kbox p{font-size:.75rem;color:#9eb0ab;margin:0}
+.quote{
+  margin:14px 0;padding:13px 15px;background:#08111a;border:1px solid #284137;border-radius:9px;
+  color:#e6f6ef;font:600 .83rem/1.55 ui-monospace,Consolas,monospace
+}
+.metric-list{margin:24px 0;border:1px solid #22352d;border-radius:14px;overflow:hidden;background:#0a1320}
+.metric-row{
+  display:grid;grid-template-columns:150px 1fr 54px 1fr 54px;gap:9px;align-items:center;padding:10px 12px;border-bottom:1px solid #22352d;font-size:.7rem
+}
+.metric-row:last-child{border-bottom:0}
+.metric-row .name{font-weight:750;color:#d6e2de}
+.bar{height:8px;border-radius:999px;background:#13202f;overflow:hidden}
+.fill-base{height:100%;background:#62757a;border-radius:999px}
+.fill-doc{height:100%;background:linear-gradient(90deg, var(--green-2), #a5ef67);border-radius:999px}
+.val{text-align:right;font-variant-numeric:tabular-nums;color:#9eb0ab}
+.val.doc{color:#b0f07a;font-weight:850}
+.result-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.result-card{border:1px solid #22352d;border-radius:10px;padding:13px;background:#0a1320}
+.result-card strong{display:block;color:#eef6ef;font-size:1.1rem}
+.result-card span{font-size:.65rem;color:#9eb0ab}
+.evidence{
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:18px 0
+}
+.evidence div{position:relative;text-align:center;border:1px solid #2a463d;background:#0b1621;border-radius:8px;padding:9px 5px;font-size:.61rem;font-weight:750;color:#dceddf}
+.tradeoffs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.trade{border:1px solid #22352d;border-radius:12px;padding:16px;background:#0a1320}
+.trade.doc{background:linear-gradient(180deg, rgba(16,34,24,.62), rgba(11,18,31,.96));border-color:#355e30}
+.trade h3{margin:0 0 8px;font-size:.86rem}
+.trade ul{margin:0;padding-left:18px;font-size:.73rem;color:#9eb0ab}
+.trade li{margin:5px 0}
+.future{
+  margin:68px -48px 62px;padding:34px 48px;
+  background:
+    linear-gradient(180deg, rgba(4,7,11,.96), rgba(8,14,22,.98)),
+    repeating-linear-gradient(90deg, transparent 0, transparent 29px, rgba(143,212,63,.06) 30px),
+    repeating-linear-gradient(0deg, transparent 0, transparent 29px, rgba(143,212,63,.06) 30px);
+  border:1px solid #355e30;
+  color:#fff;border-radius:20px
+}
+.future .section-label{color:var(--green)}
+.future h2{color:#fff}
+.future .intro{color:#c1d5cf;font-size:.84rem}
+.future-badge{
+  display:inline-block;font-size:.61rem;text-transform:uppercase;letter-spacing:.1em;font-weight:850;
+  color:#dff2d0;background:#173015;border:1px solid #426f33;border-radius:999px;padding:5px 9px;margin-bottom:10px
+}
+.future-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}
+.future-card{
+  border:1px solid #244036;border-radius:12px;padding:16px;background:rgba(9,17,29,.82)
+}
+.future-card strong{font-size:.84rem;display:block;color:#fff;margin-bottom:5px}
+.future-card p{font-size:.72rem;color:#bed0cb;margin:0;line-height:1.5}
+.future-card .why{display:block;margin-top:8px;color:#b0f07a;font-size:.65rem;font-weight:750}
+.future-note{font-size:.69rem;color:#aac2ba;margin:16px 0 0}
+.boundary{display:grid;grid-template-columns:1fr 50px 1fr;gap:10px;align-items:stretch;margin:20px 0}
+.bnd{border:1px solid #22352d;border-radius:12px;padding:15px;background:#0a1320}
+.bnd strong{font-size:.76rem;color:#eef6f1}
+.bnd p{font-size:.69rem;color:#9eb0ab;margin:6px 0 0}
+.big-arrow{display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:900}
+.conclusion{
+  border-top:4px solid var(--green);
+  background:linear-gradient(180deg, rgba(16,34,24,.62), rgba(11,18,31,.96));
+  border-radius:0 0 14px 14px;padding:21px;margin-top:24px;border-left:1px solid #355e30;border-right:1px solid #355e30;border-bottom:1px solid #355e30
+}
+.conclusion p{margin:0;font-size:.92rem;color:#eff5f2}
+.github{
+  display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;border:1px solid #355e30;
+  background:linear-gradient(180deg, rgba(16,34,24,.62), rgba(11,18,31,.96));
+  border-radius:14px;padding:18px;margin-top:28px
+}
+.github strong{display:block;color:#f0f6f3;font-size:.85rem}
+.github p{font-size:.72rem;color:#9eb0ab;margin:5px 0 0}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;padding:9px 13px;
+  background:linear-gradient(180deg, #8fd43f, #77c73c);color:#071007;text-decoration:none;border-radius:8px;font-size:.72rem;font-weight:850;white-space:nowrap
+}
+.btn:hover{color:#071007;filter:brightness(1.04)}
+.sources{font-size:.73rem;color:#9eb0ab}
+.sources li{margin:5px 0}
+.footer{border-top:1px solid #17261f;background:#04070b;color:#95a8a2;padding:26px 24px;font-size:.7rem}
+.footer-in{max-width:var(--wide);margin:auto;display:flex;justify-content:space-between;gap:20px}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}.hero-card{max-width:620px}
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .models{grid-template-columns:1fr 1fr}
+  .future{margin-left:-20px;margin-right:-20px;padding-left:28px;padding-right:28px}
+}
+@media(max-width:680px){
+  body{font-size:15px}
+  .sitebar nav{display:none}
+  .hero{padding-top:28px}
+  .hero h1{font-size:2.28rem}
+  .summary-grid,.control,.killer,.tradeoffs,.future-grid,.storage{grid-template-columns:1fr}
+  .same-strip{grid-template-columns:1fr 1fr}
+  .models{grid-template-columns:1fr}
+  .stats,.result-cards{grid-template-columns:1fr 1fr}
+  .metric-row{grid-template-columns:112px 1fr 48px;row-gap:5px}
+  .metric-row .docbar{grid-column:2}.metric-row .docval{grid-column:3}
+  .evidence{grid-template-columns:repeat(2,1fr)}
+  .boundary{grid-template-columns:1fr}.big-arrow{transform:rotate(90deg)}
+  .github{grid-template-columns:1fr}.btn{justify-self:start}
+  .future{margin-left:0;margin-right:0;padding:24px 20px}
+}
+@media(max-width:430px){
+  .stats,.result-cards{grid-template-columns:1fr}
+  .same-strip{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff;color:#111}
+  .sitebar,.footer{background:#fff;color:#333}
+  .future{background:#fff;color:#111;border:1px solid #bbb}
+  .future h2,.future-card strong{color:#111}
+  .future .intro,.future-card p,.future-note{color:#555}
+}
+
+</style>
 </head>
 <body>
-  <a class="skip" href="#article">Skip to article</a>
-  <nav><div class="nav"><div class="brand">Continuum · Field Notes</div><a href="#method">Method &amp; sources</a></div></nav>
-  <header class="hero">
-    <div class="hero-inner">
-      <div><div class="kicker">Measured document intelligence</div><h1>Parse Before<br><span>You Prompt.</span></h1><p class="dek">Why Document Intelligence Is the Hidden Layer of Reliable RAG</p><div class="meta"><span>Continuum Resources LLC · Generative AI</span><span>September 2026</span><span>8 min read</span></div></div>
-      <div class="stamp" aria-label="Evaluation summary"><strong>28</strong><span>pipeline/question cases</span><strong>1 pass</strong><span>same models, different representation</span></div>
+<header class="sitebar">
+  <div class="sitebar-inner">
+    <div class="brand">Continuum · Field Notes</div>
+    <nav><a href="#results">Results</a><a href="#future">Beyond the benchmark</a><a href="#sources">Sources</a></nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow">Generative AI · Document Intelligence</div>
+    <h1>Parse Before You Prompt</h1>
+    <p class="dek">Why document intelligence is the hidden layer of reliable RAG.</p>
+    <div class="byline"><span>Prem Tamang · Gen AI Lead</span><span>Continuum Resources</span><span>August 2026</span></div>
+  </div>
+  <aside class="hero-card">
+    <div class="label">The experiment</div>
+    <strong>Same RAG stack. One controlled variable.</strong>
+    <ul>
+      <li>10-page synthetic technical report</li>
+      <li>14 ground-truth questions</li>
+      <li>28 pipeline/question cases</li>
+      <li>PyMuPDF baseline vs. Docling standard</li>
+    </ul>
+  </aside>
+</section>
+
+<div class="summary-wrap">
+<section class="summary">
+  <div class="summary-top">
+    <h2>The field note in 60 seconds</h2>
+    <div class="summary-meta">Measured once · descriptive, not universal</div>
+  </div>
+  <div class="summary-grid">
+    <div class="sum-card"><span>Intent</span><strong>Test parsing as a RAG quality variable.</strong><p>Hold embeddings, vector search, prompt, and GPT-5.1 constant.</p></div>
+    <div class="sum-card"><span>Built</span><strong>A runnable baseline-vs-Docling application.</strong><p>FastAPI, PostgreSQL, Chroma, Streamlit, local parsing, live RAG.</p></div>
+    <div class="sum-card"><span>Finding</span><strong>Recall@1: 41.7% → 75%.</strong><p>Docling also reached 100% answer match and table accuracy.</p></div>
+    <div class="sum-card"><span>Why it matters</span><strong>Precise provenance: 0% → 100%.</strong><p>Supported Docling answers could be traced to stored source regions.</p></div>
+  </div>
+  <div class="thesis"><strong>A retriever cannot recover evidence that ingestion already destroyed.</strong> Better models help only after the evidence survives parsing.</div>
+</section>
+</div>
+
+<main class="article">
+<section class="section">
+  <div class="section-label">01 · Why we ran this</div>
+  <h2>RAG quality starts before retrieval.</h2>
+  <p class="lede">Most RAG optimization starts downstream: a better embedding model, reranking, a larger context window, a stronger prompt, or a newer LLM. Those choices matter, but every one operates on the representation produced during ingestion.</p>
+  <p>A technical PDF carries more than text: reading order, hierarchy, row/column relationships, captions, diagrams, formulas, code, footnotes, and sometimes scanned content. If parsing interleaves columns, flattens a table, drops OCR-only text, or discards source geometry, the retriever is searching a damaged version of the document.</p>
+  <p>That makes parsing an architectural quality boundary. The useful question is not only <em>“Can the model answer?”</em> but also <em>“Did the pipeline preserve the evidence, retrieve it near the top, and keep enough provenance for a human to verify it?”</em></p>
+</section>
+
+<section class="section">
+  <div class="section-label">02 · Controlled experiment</div>
+  <h2>Same document. Same downstream stack. Different representation.</h2>
+  <p>We created a deterministic ten-page <strong>Project Aurora Mission Readiness Report</strong> to stress the ingestion layer: two-column prose, nested headings, two multi-page verification tables, a readiness chart, an architecture diagram, a rotated scanned appendix, a formula, code, footnotes, and retrieval distractors.</p>
+  <div class="control">
+    <div class="branch">
+      <div class="tag">Baseline</div><h3>PyMuPDF + fixed windows</h3>
+      <ul><li>Native text extraction</li><li>3 fixed token windows</li><li>800-token max + 100-token overlap</li><li>No OCR</li><li>Broad page ranges</li><li>No bounding-box provenance</li></ul>
     </div>
-  </header>
-  <main class="shell" id="article">
-    <p class="lead">A RAG system cannot retrieve information that parsing failed to preserve. Parsing is not plumbing; it is the first knowledge-modeling decision.</p>
+    <div class="branch docling">
+      <div class="tag">Docling standard</div><h3>Structured document intelligence</h3>
+      <ul><li>Typed <code>DoclingDocument</code></li><li>Layout + reading order</li><li>OCR + table structure</li><li>Hierarchical + Hybrid chunking</li><li>Page/item/bounding-box provenance</li><li>Exact evidence overlays</li></ul>
+    </div>
+  </div>
+  <div class="same-strip">
+    <div>text-embedding-3-large · 3072d</div><div>Chroma cosine · top-k 5</div><div>same prompt + schema + validator</div><div>GPT-5.1 · reasoning low</div>
+  </div>
+  <p class="note">No reranker, keyword boost, LLM judge, manual evidence injection, or selective rerun was added. The intended variable was document representation.</p>
+</section>
 
-    <section id="problem"><div class="section-no">01 · The hidden layer</div><h2>The model never sees the document you see.</h2>
-      <p>Teams often tune prompts, swap models, or add retrieval tricks before inspecting the representation entering the index. People see headings, tables, captions, scans, and diagrams. A model sees extracted text, chunks, and metadata. Once OCR text, row-to-column relationships, or page locations disappear, a downstream model cannot reliably reconstruct them.</p>
-      <p>Project Aurora isolates that hidden layer. The same synthetic ten-page PDF went through a PyMuPDF baseline with three fixed windows and a local Docling standard-quality path. Downstream controls were identical: <code>text-embedding-3-large</code>, 3,072 dimensions, Chroma cosine distance, top-k 5, GPT-5.1, the same prompt, schema, validator, abstention contract, and retry policy.</p>
-      <figure><img src="../screenshots/parsing-comparison-page-8.png" alt="Streamlit parsing comparison showing baseline and Docling representations"><figcaption class="caption">The application compares both representations without changing the downstream model configuration.</figcaption></figure>
-    </section>
+<section class="section">
+  <div class="section-label">03 · What we actually built</div>
+  <h2>A working application, not a notebook-only benchmark.</h2>
+  <p>The comparison was implemented end to end so the parser output, chunks, retrieval hits, generated claims, and highlighted evidence could all be inspected interactively.</p>
+  <div class="stack">
+    <div class="stack-row">
+      <div class="node">Upload PDF</div><div class="arrow">→</div><div class="node">Persisted run</div><div class="arrow">→</div><div class="node">Local parse</div><div class="arrow">→</div><div class="node">Chunks</div><div class="arrow">→</div><div class="node">Embeddings</div><div class="arrow">→</div><div class="node">Chroma</div><div class="arrow">→</div><div class="node">GPT-5.1</div><div class="arrow">→</div><div class="node">Evidence overlay</div>
+    </div>
+    <div class="storage">
+      <div><strong>PostgreSQL = authority</strong><span>Runs, chunks, provenance, retrieval hits, evaluation.</span></div>
+      <div><strong>Chroma = similarity search</strong><span>Externally supplied vectors + lightweight metadata.</span></div>
+      <div><strong>Filesystem = source artifacts</strong><span>PDF, Docling JSON, pages, crops, overlays.</span></div>
+    </div>
+  </div>
+  <p>The FastAPI service persists processing runs and a single background worker claims queued work from PostgreSQL. Streamlit exposes five views: Upload &amp; Process, Parsing Comparison, Structure &amp; Chunks, Ask &amp; Verify, and Evaluation.</p>
+</section>
 
-    <section id="representation"><div class="section-no">02 · Representation before retrieval</div><h2>Structure survived as addressable evidence.</h2>
-      <p>The local Docling standard pipeline used Heron layout, RapidOCR, TableFormer Accurate, Document Figure Classifier v2, Granite Vision 3.3 2B derived descriptions, and CodeFormulaV2.</p>
-      <p>Docling’s <code>DoclingDocument</code> retained typed headings, paragraphs, tables, pictures, captions, and provenance. <code>HierarchicalChunker</code> produced 47 inspection chunks; <code>HybridChunker</code> produced 25 contextualized vector chunks. Ten peers merged, none split, and the maximum contextualized size was 364 tokens under the 800-token ceiling.</p>
-      <div class="facts"><div class="card"><strong>3</strong><small>baseline vectors</small></div><div class="card"><strong>47</strong><small>hierarchical chunks</small></div><div class="card"><strong>25</strong><small>hybrid vectors</small></div><div class="card"><strong>130</strong><small>provenance regions</small></div></div>
-      <p>Local OCR recovered a “15 minutes” fact absent from baseline extraction. Structured tables retained REQ-207 and REQ-209 associations. Pictures and captions remained addressable, while generic picture descriptions stayed explicitly labeled as derived content—not verbatim evidence. Stored page and bounding-box provenance connected chunks back to source regions.</p>
-      <figure><img src="../screenshots/structure-and-chunks.png" alt="Structure and chunk inspector showing Docling hierarchy and hybrid chunks"><figcaption class="caption">Hierarchical chunks explain the document; hybrid chunks prepare it for retrieval.</figcaption></figure>
-      <p>For REQ-205, structured conversion preserved the Navigation + Analysis association that the baseline answered incorrectly. The runtime boundary is browser to Streamlit to FastAPI; FastAPI owns PostgreSQL, parsing, externally supplied Chroma vectors, Azure providers, and local artifacts.</p>
-    </section>
+<section class="section">
+  <div class="section-label">04 · What Docling changed before embedding</div>
+  <h2>It preserved document structure instead of collapsing the PDF immediately into text.</h2>
+  <p>Our benchmark pinned <strong>Docling 2.123.1</strong> and used a quality-focused local standard pipeline. Remote Docling services were disabled.</p>
+  <div class="models">
+    <div class="model"><div class="mstage">Layout</div><strong>Heron</strong><p>Detects document elements and reading order.</p></div>
+    <div class="model"><div class="mstage">Tables</div><strong>TableFormer · Accurate</strong><p>Recovers rows, columns, cells, and relationships.</p></div>
+    <div class="model"><div class="mstage">OCR</div><strong>RapidOCR</strong><p>Recovers text from scanned/rotated page content.</p></div>
+    <div class="model"><div class="mstage">Figures</div><strong>Document Figure Classifier v2</strong><p>Classifies charts, diagrams, and other figures.</p></div>
+    <div class="model"><div class="mstage">Picture descriptions</div><strong>Granite Vision 3.3 2B</strong><p>Creates clearly labeled derived descriptions locally.</p></div>
+    <div class="model"><div class="mstage">Formula + code</div><strong>CodeFormulaV2</strong><p>Preserves machine-searchable representations of technical content.</p></div>
+  </div>
 
-    <section id="evaluation"><div class="section-no">03 · Controlled evaluation</div><h2>Rank one changed more than rank five.</h2>
-      <p>Fourteen ground-truth questions—12 answerable and two unsupported—ran once against both indexes. Strict relevance required expected-page overlap and all normalized expected terms; a broad baseline page range alone did not pass. Answers used deterministic matching against complete accepted alternatives. No LLM judge, reranking, evidence injection, or selective rerun was used.</p>
-      <figure class="chart"><img src="assets/evaluation-retrieval-metrics.png" alt="Bar chart comparing Recall at 1, 3, and 5 and MRR for baseline and Docling standard"></figure>
-      <p>Docling’s Recall@1 was 75.0% versus 41.7%; MRR was 0.836 versus 0.667. Recall@3 tied at 91.7%, while Recall@5 was 100.0% versus 91.7%. Recall@5 is less discriminating because baseline contains only three broad chunks. The decisive miss was OCR: baseline could not retrieve a fact its representation never contained.</p>
-      <figure><img src="../screenshots/evaluation.png" alt="Completed Streamlit Evaluation screen with measured scorecards and charts"><figcaption class="caption">The API-backed Evaluation page shows persisted configuration, progress, scorecards, charts, cases, and exports.</figcaption></figure>
-      <figure class="chart"><img src="assets/evaluation-category-breakdown.png" alt="Bar chart comparing MRR by question category"></figure>
-    </section>
+  <table class="content-table">
+    <thead><tr><th>Source content</th><th>Searchable representation</th><th>Evidence retained</th></tr></thead>
+    <tbody>
+      <tr><td>Paragraphs / lists</td><td>Text + contextual headings</td><td>Item, page, bbox, char span</td></tr>
+      <tr><td>Complex tables</td><td>Structured row/column serialization</td><td>Table object, crop, refs, regions</td></tr>
+      <tr><td>Pictures / charts</td><td>Source caption + labeled derived description</td><td>Crop, classification, page region</td></tr>
+      <tr><td>Formula / code</td><td>Extracted representation</td><td>Source item + region</td></tr>
+      <tr><td>OCR content</td><td>Recognized source text</td><td>OCR-backed item + bbox</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Generated picture descriptions were retrieval aids, not verbatim evidence. Source captions and derived model descriptions remained visibly distinct.</p>
+</section>
 
-    <section id="answers"><div class="section-no">04 · Answers and evidence</div><h2>Better overall, not perfect everywhere.</h2>
-      <figure class="chart"><img src="assets/evaluation-answer-metrics.png" alt="Bar chart comparing answer, citation, provenance, and abstention metrics"></figure>
-      <p>Docling matched 12 of 12 answerable alternatives; baseline matched 10, or 100.0% versus 83.3%. Table-answer accuracy was 100.0% versus 75.0%. Both branches correctly abstained on both unsupported questions and achieved 100% citation-ID/structure integrity among supported answers.</p>
-      <p>The caveat matters: baseline citation-page accuracy was 100% across 11 supported answers, while Docling scored 91.7% because one correct table answer did not cite an expected page for every claim. Baseline also beat Docling on table-category MRR, 0.750 versus 0.508. Yet baseline’s source locations were broad ranges and precise provenance remained 0%; Docling supplied stored bounding boxes for every supported answer. Citation integrity is not entailment, and provenance does not eliminate hallucination. It makes verification possible.</p>
-      <figure><img src="../screenshots/ask-and-verify.png" alt="Ask and Verify screen with grounded claims and evidence"><figcaption class="caption">Generated source IDs resolve through application-owned metadata, never model-invented coordinates. Claims trace through evidence IDs, retrieval hits, stored chunks, Docling items, pages, bounding boxes, and optional overlays.</figcaption></figure>
-    </section>
+<section class="section">
+  <div class="section-label">05 · Chunking and provenance</div>
+  <h2>Natural document structure and embedding constraints were treated as separate problems.</h2>
+  <p><strong>HierarchicalChunker</strong> followed document elements and hierarchy for inspection. <strong>HybridChunker</strong> then made those units embedding-friendly through token-aware merging and contextualization.</p>
+  <div class="stats">
+    <div class="stat"><strong>47</strong><span>hierarchical inspection chunks</span></div>
+    <div class="stat"><strong>25</strong><span>Hybrid vector chunks</span></div>
+    <div class="stat"><strong>10</strong><span>compatible peer merges</span></div>
+    <div class="stat"><strong>130</strong><span>persisted provenance regions</span></div>
+  </div>
+  <p>The largest contextualized Hybrid chunk was only <strong>364 tokens</strong> under an 800-token ceiling; no production split was needed. We embedded the contextualized form while preserving raw source-oriented text separately.</p>
+  <p class="note"><strong>Mental model:</strong> HierarchicalChunker organizes the filing cabinet. HybridChunker packs related files into boxes that fit through the embedding model's door.</p>
+</section>
 
-    <section id="latency"><div class="section-no">05 · The cost profile</div><h2>Slower preprocessing, leaner questions.</h2>
-      <figure class="chart"><img src="assets/evaluation-latency.png" alt="Bar chart comparing measured retrieval, generation, and total latency"></figure>
-      <p>Mean total query latency was 2,960 ms for Docling and 3,179 ms for baseline. Total chat tokens were 15,325 versus 33,974 because Docling’s retrieved evidence averaged 495 tokens rather than 1,913. But preprocessing was costly: Docling conversion and chunking took 1,954,758 ms—about 32.6 minutes—on CPU, compared with 52 ms for baseline extraction. These timings describe one quality profile on one document, not a throughput benchmark.</p>
-    </section>
+<section class="section">
+  <div class="section-label">06 · The strongest proof</div>
+  <h2>Docling recovered evidence the baseline literally did not contain.</h2>
+  <p>The rotated scanned appendix contained a simple but decisive fact:</p>
+  <div class="quote">Maximum recovery window: 15 minutes.</div>
+  <div class="killer">
+    <div class="kbox"><div class="klabel">Baseline</div><strong>Correctly abstained.</strong><p>PyMuPDF never extracted the scanned sentence, so none of the three indexed chunks contained “15 minutes.”</p></div>
+    <div class="kbox doc"><div class="klabel">Docling</div><strong>Answered 15 minutes.</strong><p>RapidOCR recovered the text; the cited chunk resolved to page 8, Docling item <code>#/texts/121</code>, and stored bounding-box regions.</p></div>
+  </div>
+  <p><strong>The LLM did not become smarter between runs. The evidence became available.</strong> No amount of prompt tuning can reliably retrieve content that never entered the index.</p>
 
-    <section id="boundary"><div class="section-no">06 · Data boundary</div><h2>Local documents; approved hosted text calls.</h2>
-      <div class="boundary"><div class="card"><strong>Local application boundary</strong><small>PDF, page images, table and picture crops, Docling JSON, conversion, PostgreSQL, and Chroma</small></div><div class="arrow" aria-hidden="true">→</div><div class="card"><strong>Configured Azure OpenAI boundary</strong><small>contextualized text for embeddings; question plus retrieved textual evidence for GPT-5.1</small></div></div>
-      <p>Docling runs locally with remote services disabled. Original PDFs and visual artifacts remain local. Contextualized chunk text is sent to the configured embedding deployment; query text is embedded there; the question and retrieved textual evidence are sent to GPT-5.1. It would be inaccurate to claim no data leaves the machine—the boundary is selective and explicit.</p>
-    </section>
+  <h3>A second failure mode: the words survived, but the relationship did not.</h3>
+  <p>For <strong>REQ-205</strong>, the baseline retrieved a broad chunk containing the right terms at rank one, yet the answer associated the requirement with <strong>Guidance</strong>. The accepted relation was <strong>Navigation</strong>, verified by <strong>Analysis</strong>. Docling preserved the table association and answered the multi-part question correctly.</p>
+  <p class="note">Retrieving a chunk with the right words is not the same as retrieving a representation with the right relationships.</p>
+</section>
 
-    <section id="limits"><div class="section-no">07 · Engineering honesty</div><h2>This is evidence, not a universal ranking.</h2>
-      <ul class="limits"><li>One synthetic ten-page document and one completed pass.</li><li>Heading reconstruction was not perfect.</li><li>Some vertical table merges were not reconstructed.</li><li>Picture descriptions were generic derived aids.</li><li>Header repetition was configured but not exercised.</li><li>CPU conversion was slow.</li><li>Citation integrity does not prove entailment.</li><li>Provenance does not eliminate hallucination.</li><li>Granite-Docling-258M was intentionally not evaluated.</li></ul>
-      <div class="callout"><strong>The practical conclusion:</strong> on this document, Docling improved rank-one retrieval, answer matching, table-answer accuracy, precise provenance, token use, and mean latency—but it did not win every metric. Prompt quality cannot repair missing OCR, flattened relationships, or absent source coordinates. Parse accurately. Retrieve structurally. Answer with evidence.</div>
-    </section>
+<section class="section" id="results">
+  <div class="section-label">07 · Measured RAG impact</div>
+  <h2>The biggest gain was getting relevant evidence closer to rank one.</h2>
+  <p>Fourteen questions, 12 answerable and two unsupported, ran once against both indexes. Relevance required expected-page intersection and all normalized expected terms. Answer matching was deterministic; no LLM judge was used.</p>
+  <div class="metric-list">
+    <div class="metric-row"><div class="name">Recall@1</div><div class="bar"><div class="fill-base" style="width:41.7%"></div></div><div class="val">41.7%</div><div class="bar docbar"><div class="fill-doc" style="width:75%"></div></div><div class="val doc">75%</div></div>
+    <div class="metric-row"><div class="name">Recall@3</div><div class="bar"><div class="fill-base" style="width:91.7%"></div></div><div class="val">91.7%</div><div class="bar docbar"><div class="fill-doc" style="width:91.7%"></div></div><div class="val doc">91.7%</div></div>
+    <div class="metric-row"><div class="name">Recall@5</div><div class="bar"><div class="fill-base" style="width:91.7%"></div></div><div class="val">91.7%</div><div class="bar docbar"><div class="fill-doc" style="width:100%"></div></div><div class="val doc">100%</div></div>
+    <div class="metric-row"><div class="name">MRR</div><div class="bar"><div class="fill-base" style="width:66.7%"></div></div><div class="val">.667</div><div class="bar docbar"><div class="fill-doc" style="width:83.6%"></div></div><div class="val doc">.836</div></div>
+    <div class="metric-row"><div class="name">Answer match</div><div class="bar"><div class="fill-base" style="width:83.3%"></div></div><div class="val">83.3%</div><div class="bar docbar"><div class="fill-doc" style="width:100%"></div></div><div class="val doc">100%</div></div>
+    <div class="metric-row"><div class="name">Table accuracy</div><div class="bar"><div class="fill-base" style="width:75%"></div></div><div class="val">75%</div><div class="bar docbar"><div class="fill-doc" style="width:100%"></div></div><div class="val doc">100%</div></div>
+    <div class="metric-row"><div class="name">Precise provenance</div><div class="bar"><div class="fill-base" style="width:0%"></div></div><div class="val">0%</div><div class="bar docbar"><div class="fill-doc" style="width:100%"></div></div><div class="val doc">100%</div></div>
+  </div>
+  <div class="result-cards">
+    <div class="result-card"><strong>+33.3 pp</strong><span>Recall@1 improvement</span></div>
+    <div class="result-card"><strong>12 / 12</strong><span>Docling answer matches; baseline 10 / 12</span></div>
+    <div class="result-card"><strong>4 / 4</strong><span>Docling table answers; baseline 3 / 4</span></div>
+    <div class="result-card"><strong>495</strong><span>mean evidence tokens / query; baseline 1,913</span></div>
+    <div class="result-card"><strong>15,325</strong><span>total chat tokens; baseline 33,974</span></div>
+    <div class="result-card"><strong>100%</strong><span>unsupported abstention for both pipelines</span></div>
+  </div>
+  <p class="note">Recall@3 tied at 91.7%. Because the baseline had only three broad chunks, Recall@5 is a weak discriminator here; Recall@1 and MRR better expose ranking quality.</p>
+</section>
 
-    <section class="sources" id="method"><div class="section-no">Method &amp; sources</div><h2>Reproducible by design.</h2>
-      <p>Explore the runnable companion repository at <a href="https://github.com/tprem2002/parse-before-you-prompt">tprem2002/parse-before-you-prompt</a>.</p>
-      <!-- Replace this URL if the final GitHub organization/repository name differs. -->
-      <p>All numeric findings come from one completed controlled Project Aurora evaluation. Results are descriptive and imply no statistical significance.</p>
-      <ul><li><a href="https://docling-project.github.io/docling/">Docling documentation</a></li><li><a href="https://docling-project.github.io/docling/concepts/docling_document/">DoclingDocument concepts</a></li><li><a href="https://docling-project.github.io/docling/concepts/chunking/">Docling native chunking</a></li><li><a href="https://docling-project.github.io/docling/reference/docling_document/">Docling provenance reference</a></li><li><a href="https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/embeddings">Microsoft Learn · Azure OpenAI embeddings</a></li></ul>
-    </section>
-  </main>
-  <footer><div class="footer"><span>Continuum Field Notes · Generative AI</span><span>© 2026 Continuum Resources LLC</span></div></footer>
+<section class="section">
+  <div class="section-label">08 · Grounding and provenance</div>
+  <h2>GPT-5.1 cited evidence IDs. The application owned the source location.</h2>
+  <p>The answer model received evidence IDs and textual evidence. It did not generate or invent document coordinates. After citation validation, the application resolved each ID through stored metadata.</p>
+  <div class="evidence">
+    <div>Claim</div><div>Evidence ID</div><div>Retrieved chunk</div><div>Docling item</div><div>Page</div><div>Bounding box</div><div>Highlighted region</div>
+  </div>
+  <table class="results-table">
+    <thead><tr><th>Evidence property</th><th>Baseline</th><th>Docling</th></tr></thead>
+    <tbody>
+      <tr><td>Citation-ID integrity</td><td>100%</td><td class="good">100%</td></tr>
+      <tr><td>Page/range accuracy</td><td class="good">100%</td><td>91.7%</td></tr>
+      <tr><td>Exact region provenance</td><td>0%</td><td class="good">100%</td></tr>
+      <tr><td>Visual evidence overlay</td><td>No</td><td class="good">Yes</td></tr>
+    </tbody>
+  </table>
+  <p>One correct Docling REQ-207 answer included an extra claim cited to page 9 instead of the strict expected page 5. We keep that result visible because it demonstrates the point of provenance: <strong>verification metadata does not eliminate hallucination; it makes citation problems inspectable.</strong></p>
+</section>
+
+<section class="section">
+  <div class="section-label">09 · Engineering honesty</div>
+  <h2>Docling was stronger overall, but not on every metric.</h2>
+  <div class="tradeoffs">
+    <div class="trade doc"><h3>Where Docling was stronger</h3><ul><li>Recovered the OCR-only fact.</li><li>Recall@1: 75% vs. 41.7%.</li><li>MRR: .836 vs. .667.</li><li>Answer match: 100% vs. 83.3%.</li><li>Table accuracy: 100% vs. 75%.</li><li>Precise provenance: 100% vs. 0%.</li><li>Much smaller query evidence context.</li></ul></div>
+    <div class="trade"><h3>Where baseline held its own</h3><ul><li>Recall@3 tied at 91.7%.</li><li>Table-category MRR: .750 vs. .508.</li><li>Broad page/range score: 100% vs. 91.7%.</li><li>Code question tied.</li><li>Parsing was dramatically faster.</li></ul></div>
+  </div>
+  <p>A very broad chunk can rank well because it contains many candidate answers. That does not necessarily mean its representation is better. It can also mean more unrelated context and weaker traceability.</p>
+</section>
+
+<section class="future" id="future">
+  <div class="future-badge">Not benchmarked here · future exploration</div>
+  <div class="section-label">10 · Where Docling could go next</div>
+  <h2>Our experiment used only part of Docling's current capability surface.</h2>
+  <p class="intro">The measured results above come only from our pinned standard pipeline. Current Docling documentation exposes additional VLM and enrichment paths that could further change how difficult documents are represented. These are opportunities, not results from Project Aurora.</p>
+  <div class="future-grid">
+    <div class="future-card">
+      <strong>Full-page Granite-Docling-258M VLM conversion</strong>
+      <p>Docling now exposes Granite-Docling-258M as a recommended full-page VLM conversion option producing structured DocTags. That offers a different route for visually complex pages where one end-to-end model interprets the entire page.</p>
+      <span class="why">Why it could help RAG → fewer hand-offs between page-analysis stages and potentially stronger end-to-end visual understanding.</span>
+    </div>
+    <div class="future-card">
+      <strong>Chart extraction into structured data</strong>
+      <p>Docling supports chart extraction for bar, pie, and line charts, with structured outputs such as CSV and optional code/summary representations.</p>
+      <span class="why">Why it could help RAG → a chart value becomes searchable structured evidence instead of relying primarily on captions or generic image descriptions.</span>
+    </div>
+    <div class="future-card">
+      <strong>VLM-based table structure recognition</strong>
+      <p>The current model catalog includes Granite Vision 4.1 4B for table-structure recognition via OTSL, alongside TableFormer.</p>
+      <span class="why">Why it could help RAG → another parsing strategy for difficult or highly visual tables where cell relationships are the answer.</span>
+    </div>
+    <div class="future-card">
+      <strong>GPU / vLLM acceleration</strong>
+      <p>Docling provides GPU-oriented examples, including serving Granite-Docling through vLLM for higher-throughput VLM processing.</p>
+      <span class="why">Why it could help RAG → the 32.6-minute CPU ingestion time in our experiment is not the ceiling; hardware and runtime architecture are a separate optimization dimension.</span>
+    </div>
+    <div class="future-card">
+      <strong>Alternative OCR and vision models</strong>
+      <p>Current Docling supports multiple OCR engines and several VLM families for full-page conversion and picture descriptions.</p>
+      <span class="why">Why it could help RAG → different document domains, languages, scans, and figure types can be matched to different model profiles instead of forcing one parser configuration everywhere.</span>
+    </div>
+    <div class="future-card">
+      <strong>Broader RAG integrations</strong>
+      <p>Docling documents and chunks integrate with common RAG frameworks and vector/search backends, making the document-intelligence layer portable beyond our Chroma demo.</p>
+      <span class="why">Why it could help RAG → preserve the evidence model while changing retrieval infrastructure, orchestration frameworks, or deployment architecture.</span>
+    </div>
+  </div>
+  <p class="future-note">Important: none of these capabilities were included in the 14-question benchmark. They are highlighted because they are now documented Docling capabilities and logical next experiments.</p>
+</section>
+
+<section class="section">
+  <div class="section-label">11 · Cost and deployment reality</div>
+  <h2>Quality moved work into ingestion and made query context leaner.</h2>
+  <table class="trade-table">
+    <thead><tr><th>Measure</th><th>Baseline</th><th>Docling standard</th></tr></thead>
+    <tbody>
+      <tr><td>Initial local processing</td><td><strong>52 ms</strong></td><td>32.6 min CPU</td></tr>
+      <tr><td>Mean evidence tokens / query</td><td>1,913</td><td class="good">495</td></tr>
+      <tr><td>Total chat input tokens</td><td>32,537</td><td class="good">13,951</td></tr>
+      <tr><td>Total chat tokens</td><td>33,974</td><td class="good">15,325</td></tr>
+      <tr><td>Mean total query latency</td><td>3,179 ms</td><td class="good">2,960 ms</td></tr>
+      <tr><td>p95 total query latency</td><td>6,508 ms</td><td class="good">4,198 ms</td></tr>
+    </tbody>
+  </table>
+  <p>The quality-focused Docling run was expensive on a CPU-only machine. That is descriptive of this model profile and hardware, not a universal Docling throughput claim. Accelerator choice, enabled stages, caching, and document mix would change it materially.</p>
+  <div class="boundary">
+    <div class="bnd"><strong>Local application boundary</strong><p>Source PDF, Docling conversion, lossless JSON, page images, table/picture crops, PostgreSQL provenance, and Chroma.</p></div>
+    <div class="big-arrow">→</div>
+    <div class="bnd"><strong>Approved company Azure OpenAI boundary</strong><p>Contextualized chunk/query text for embeddings; question plus retrieved textual evidence for GPT-5.1.</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">12 · What this tells us</div>
+  <h2>Docling helped because it improved the evidence model, not because it replaced RAG.</h2>
+  <p>Docling did not remove the need for retrieval design, prompts, evaluation, structured outputs, or citation validation. It changed what those components received: source content that survived OCR, table relationships that remained addressable, focused embedding units, and provenance that could be resolved back to exact regions.</p>
+  <p>Our benchmark is deliberately small: one synthetic ten-page report, one evaluation pass, imperfect heading recovery, some table-merge limitations, generic derived image descriptions, CPU-heavy preprocessing, and one Docling citation-page miss. It is evidence of a design principle, not a universal parser ranking.</p>
+  <div class="conclusion"><p><strong>The durable lesson is broader than Docling:</strong> validate the ingestion layer with the same rigor as the model layer. A bigger LLM cannot retrieve evidence that never entered the index. <strong>Parse accurately. Retrieve structurally. Answer with evidence.</strong></p></div>
+  <div class="github">
+    <div><strong>Explore the companion demo</strong><p>Project Aurora, both ingestion paths, FastAPI, Streamlit, ground truth, reference evaluation outputs, and the complete evidence-to-overlay implementation are available in the public repository.</p></div>
+    <a class="btn" href="https://github.com/tprem2002/parse-before-you-prompt">View project on GitHub →</a>
+  </div>
+</section>
+
+<section class="section sources" id="sources">
+  <div class="section-label">Method &amp; sources</div>
+  <h2>Measured results and documented capabilities are kept separate.</h2>
+  <p>Project Aurora metrics come from one controlled evaluation: 14 questions, 12 answerable, two unsupported, 28 total pipeline/question cases. The future-capability section is based on current Docling documentation and is explicitly not part of the benchmark.</p>
+  <ul>
+    <li><a href="https://docling-project.github.io/docling/">Docling documentation</a></li>
+    <li><a href="https://docling-project.github.io/docling/usage/model_catalog/">Docling model catalog</a></li>
+    <li><a href="https://docling-project.github.io/docling/usage/vision_models/">Docling VLM pipeline</a></li>
+    <li><a href="https://docling-project.github.io/docling/reference/pipeline_options/">Docling pipeline options / chart extraction</a></li>
+    <li><a href="https://docling-project.github.io/docling/concepts/docling_document/">DoclingDocument concepts</a></li>
+    <li><a href="https://github.com/tprem2002/parse-before-you-prompt">Companion demo repository</a></li>
+  </ul>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-in"><span>Continuum Resources · Field Notes</span><span>AI-driven, agile, and automated solutions for mission-critical outcomes</span></div>
+</footer>
 </body>
 </html>

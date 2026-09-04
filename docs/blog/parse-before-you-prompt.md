@@ -1,71 +1,177 @@
-# Parse Before You Prompt: Why Document Intelligence Is the Hidden Layer of Reliable RAG
+# Parse Before You Prompt
 
-*A controlled comparison on one synthetic ten-page mission-readiness report.*
+## Why document intelligence is the hidden layer of reliable RAG
 
-A RAG system cannot retrieve information that parsing failed to preserve. That sounds obvious, yet teams often tune prompts, swap models, or add retrieval tricks before inspecting the representation entering the index. The model never sees the page humans see. It sees extracted text, chunks, metadata, and whatever relationships survived conversion.
+**Prem Tamang · Gen AI Lead · Continuum Resources · August 2026**
 
-Project Aurora isolates that hidden layer. The same PDF went through two paths: a PyMuPDF baseline with three fixed token-window chunks, and a local Docling standard-quality pipeline. Everything downstream was held constant: the same `text-embedding-3-large` deployment, 3,072 dimensions, Chroma cosine retrieval, top-k 5, GPT-5.1 deployment, system prompt, structured answer schema, citation validator, abstention contract, and retry policy. The intended variable was document representation—not the model.
+### The field note in 60 seconds
 
-![Parsing comparison in the application](../screenshots/parsing-comparison-page-8.png)
+| | |
+|---|---|
+| **Intent** | Test parsing as a RAG quality variable while holding the downstream stack constant. |
+| **Built** | Runnable PyMuPDF baseline vs. Docling standard application using FastAPI, PostgreSQL, Chroma, Streamlit, `text-embedding-3-large`, and GPT-5.1. |
+| **Finding** | Recall@1 improved from 41.7% to 75%; Docling reached 100% answer match and table-question accuracy. |
+| **Why it matters** | Precise provenance availability moved from 0% to 100%; Docling also recovered OCR-only evidence the baseline never indexed. |
 
-## Representation before retrieval
+> **A retriever cannot recover evidence that ingestion already destroyed.** Better models help only after the evidence survives parsing.
 
-The local Docling standard pipeline used Heron layout, RapidOCR, TableFormer Accurate, Document Figure Classifier v2, Granite Vision 3.3 2B derived descriptions, and CodeFormulaV2.
+## 01 · Why we ran this
 
-Docling converts the PDF into a `DoclingDocument`: a typed structure for headings, paragraphs, tables, pictures, captions, and source provenance rather than one undifferentiated text stream. `HierarchicalChunker` produced 47 inspection chunks that made the recovered hierarchy visible. `HybridChunker` produced 25 contextualized chunks for vector indexing. Ten compatible peers merged, none required splitting, and the largest contextualized chunk was 364 tokens under the 800-token ceiling.
+Most RAG optimization starts downstream: a better embedding model, reranking, larger context, stronger prompts, or a newer LLM. Those choices matter, but they all operate on the representation produced during ingestion.
 
-![Structure and chunk inspection](../screenshots/structure-and-chunks.png)
+A technical PDF carries more than text: reading order, hierarchy, row/column relationships, captions, diagrams, formulas, code, footnotes, and scanned content. If parsing interleaves columns, flattens a table, drops OCR-only text, or discards source geometry, the retriever is searching a damaged version of the document.
 
-For REQ-205, structured conversion preserved the Navigation + Analysis association that the baseline answered incorrectly. REQ-207 and REQ-209 provide additional table-preservation examples.
+## 02 · Controlled experiment
 
-The runnable architecture keeps a strict boundary: browser → Streamlit → FastAPI. FastAPI owns the PostgreSQL processing queue, parser/chunker services, externally supplied Chroma vectors, Azure providers, and local artifacts. A supported claim resolves through evidence ID → retrieval hit → stored chunk → Docling item → page → bounding box → optional highlighted overlay.
+We created a deterministic ten-page **Project Aurora Mission Readiness Report** containing two-column prose, nested headings, multi-page verification tables, a readiness chart, architecture diagram, rotated scanned appendix, formula, code, footnotes, and retrieval distractors.
 
-That structure mattered in several ways. Local OCR recovered a “15 minutes” value absent from the baseline extraction. Structured table serialization retained the important REQ-207 and REQ-209 associations. Pictures and captions remained addressable. Source text stayed distinct from generic, derived picture descriptions, so a generated visual summary could help retrieval without masquerading as verbatim evidence. Across the indexed Docling chunks, 130 stored provenance regions connected evidence to document items, pages, and bounding boxes.
+| Baseline | Docling standard |
+|---|---|
+| PyMuPDF native text | Structured `DoclingDocument` |
+| 3 fixed windows | Layout + reading order + OCR + table structure |
+| 800-token max + 100 overlap | Hierarchical + Hybrid chunking |
+| No OCR | RapidOCR |
+| Broad page ranges | Page/item/bounding-box provenance |
+| No exact overlays | Exact evidence overlays |
 
-The result was not a perfect parse. Heading reconstruction had imperfections; some vertical table merges were not reconstructed; picture descriptions were generic; and header repetition, although supported, was not exercised because production table chunks fit under 800 tokens. CPU conversion and chunking took 1,954,758 ms—about 32.6 minutes—for this one ten-page document. The baseline extraction took 52 ms. Quality was purchased with substantial preprocessing time.
+Held constant: `text-embedding-3-large` (3072d), Chroma cosine, top-k 5, same prompt/schema/validator, GPT-5.1 with low reasoning effort.
 
-## What the controlled evaluation measured
+## 03 · What we actually built
 
-Fourteen ground-truth questions—12 answerable and two unsupported—ran once against both existing indexes, baseline first and Docling second for each question. Relevance was deliberately strict: a chunk needed expected-page overlap *and* all normalized expected terms. Broad baseline page ranges alone did not qualify. Answers were graded with deterministic normalization and complete accepted alternatives; no LLM judge, reranking, selective rerun, or manual evidence injection was used.
+The comparison was an end-to-end application:
 
-![Measured retrieval metrics](assets/evaluation-retrieval-metrics.png)
+`Upload → persisted run → local parse → chunks → embeddings → Chroma → GPT-5.1 → validated evidence IDs → page/bbox → highlighted evidence`
 
-Docling’s Recall@1 was 75.0% versus 41.7% for baseline, and MRR was 0.836 versus 0.667. Recall@3 tied at 91.7%; Recall@5 was 100.0% versus 91.7%. Recall@5 is a weak discriminator here because baseline has only three broad chunks, making rank-one behavior and MRR more informative. The baseline’s single representation miss was the OCR-only recovery-window question. Docling retrieved it at rank one.
+- **FastAPI:** document, processing, chunk, RAG, evidence, evaluation APIs
+- **PostgreSQL:** authoritative runs, chunks, provenance, retrieval hits, evaluations
+- **Chroma:** external vectors and lightweight search metadata
+- **Filesystem:** source PDF, lossless Docling JSON, page images, crops, overlays
+- **Streamlit:** Parsing Comparison, Structure & Chunks, Ask & Verify, Evaluation
 
-![Completed Evaluation screen](../screenshots/evaluation.png)
+## 04 · What Docling changed before embedding
 
-![Measured answer and citation metrics](assets/evaluation-answer-metrics.png)
+Our benchmark pinned **Docling 2.123.1** and used a local standard quality pipeline:
 
-Docling matched all 12 answerable ground-truth alternatives; baseline matched 10, for 100.0% versus 83.3%. Table-question accuracy was 100.0% versus 75.0%. Both branches correctly abstained on both unsupported questions and achieved 100% citation-ID/structure integrity among supported answers.
+- **Heron:** layout and reading order
+- **TableFormer Accurate:** table structure
+- **RapidOCR:** scanned content
+- **Document Figure Classifier v2:** figure classification
+- **Granite Vision 3.3 2B:** derived picture descriptions
+- **CodeFormulaV2:** formula/code extraction
 
-Those headline numbers need nuance. Baseline citation-page accuracy was 100% for its 11 supported answers, while Docling scored 91.7% because one correct table answer’s claims did not all cite an expected page. Baseline also exceeded Docling on table-category MRR, 0.750 versus 0.508. But baseline’s citations were broad page ranges and its precise-provenance rate was 0%. Docling’s was 100%: every supported answer offered at least one real, stored bounding box. Citation integrity still does not prove entailment, and provenance does not eliminate hallucination; it makes verification possible.
+| Source | Searchable representation | Evidence retained |
+|---|---|---|
+| Paragraph/list | Text + contextual headings | item, page, bbox, char span |
+| Table | structured row/column serialization | table object, crop, refs, regions |
+| Picture/chart | caption + labeled derived description | crop, classification, region |
+| Formula/code | extracted representation | source item + region |
+| OCR | recognized source text | OCR-backed item + bbox |
 
-![Mean measured latency](assets/evaluation-latency.png)
+## 05 · Chunking and provenance
 
-Query-time efficiency favored Docling modestly. Mean total latency was 2,960 ms versus 3,179 ms, and total chat tokens were 15,325 versus 33,974. Docling retrieved five smaller, contextualized chunks per question but averaged only 495 evidence tokens; baseline’s three broad chunks averaged 1,913. Parsing was slower, but the resulting query context was much leaner.
+- 47 hierarchical inspection chunks
+- 25 Hybrid vector chunks
+- 10 peer merges
+- 0 production splits
+- 364 maximum contextualized tokens under an 800-token ceiling
+- 130 provenance regions
 
-![Ask and Verify with grounded evidence](../screenshots/ask-and-verify.png)
+**HierarchicalChunker** preserves natural structure for inspection. **HybridChunker** makes those units embedding-friendly with token-aware contextualization.
 
-## The data boundary is part of the design
+## 06 · Strongest measured proof
 
-Docling conversion occurs locally with remote services disabled. Original PDFs, page images, table crops, picture crops, and Docling JSON remain local. Contextualized chunk text is sent to the user's configured Azure OpenAI boundary for embedding. At question time, query text goes to the same embedding deployment, while only the question and retrieved textual evidence go to the configured GPT-5.1 deployment. It would be inaccurate to claim that no data leaves the machine; the boundary is selective and explicit.
+The scanned appendix contained:
 
-## The practical conclusion
+> **Maximum recovery window: 15 minutes.**
 
-On this document, Docling improved rank-one retrieval, answer matching, table-answer accuracy, precise provenance, token use, and mean latency. It did not win every metric, and this sample is far too small for universal claims. Granite-Docling-258M was intentionally not evaluated.
+**Baseline:** PyMuPDF never extracted the sentence, so the correct answer was an abstention.
 
-The stronger conclusion is architectural: prompt quality cannot repair missing OCR, flattened table relationships, or absent source coordinates. Before optimizing the prompt, inspect what the model is being asked to understand. Parse accurately. Retrieve structurally. Answer with evidence.
+**Docling:** RapidOCR recovered it; the system answered **15 minutes** and resolved the evidence to page 8, Docling item `#/texts/121`, and stored bounding boxes.
 
-## Sources and method
+The LLM did not become smarter. The evidence became available.
 
-The runnable companion repository is available at [tprem2002/parse-before-you-prompt](https://github.com/tprem2002/parse-before-you-prompt).
+A second failure mode appeared in **REQ-205**: baseline retrieved a broad relevant chunk but associated the requirement with **Guidance**. The accepted relation was **Navigation**, verified by **Analysis**. Docling preserved that table relationship and answered correctly.
 
-<!-- Replace this URL if the final GitHub organization/repository name differs. -->
+## 07 · Measured RAG impact
 
-- [Docling documentation — features and local execution](https://docling-project.github.io/docling/)
-- [DoclingDocument concepts](https://docling-project.github.io/docling/concepts/docling_document/)
-- [Docling native chunking](https://docling-project.github.io/docling/concepts/chunking/)
-- [Docling provenance reference](https://docling-project.github.io/docling/reference/docling_document/)
-- [Microsoft Learn — Azure OpenAI embeddings](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/embeddings)
+| Metric | Baseline | Docling |
+|---|---:|---:|
+| Recall@1 | 41.7% | **75.0%** |
+| Recall@3 | **91.7%** | **91.7%** |
+| Recall@5 | 91.7% | **100.0%** |
+| MRR | 0.667 | **0.836** |
+| Answer match | 83.3% | **100.0%** |
+| Table accuracy | 75% | **100%** |
+| Precise provenance | 0% | **100%** |
+| Unsupported abstention | **100%** | **100%** |
 
-Method note: all numeric findings come from one completed controlled Project Aurora evaluation. This is one synthetic ten-page document, 14 questions, and one pass. Results are descriptive, not statistically significant or a universal parser ranking.
+The most useful headline is Recall@1 (+33.3 pp), not Recall@5, because baseline only contained three broad chunks.
+
+## 08 · Grounding and provenance
+
+The application, not GPT-5.1, owned source geometry:
+
+**Claim → Evidence ID → Retrieved chunk → Docling item → Page → Bounding box → Highlighted region**
+
+| Evidence property | Baseline | Docling |
+|---|---:|---:|
+| Citation-ID integrity | 100% | 100% |
+| Page/range accuracy | 100% | 91.7% |
+| Exact region provenance | 0% | **100%** |
+| Evidence overlay | No | **Yes** |
+
+The one Docling citation-page miss is intentionally retained. Provenance does not eliminate hallucination; it makes citation problems inspectable.
+
+## 09 · Where Docling was stronger, and where baseline held its own
+
+**Docling stronger:** OCR recovery, Recall@1, overall MRR, answer match, table accuracy, precise provenance, smaller evidence context.
+
+**Baseline held its own:** Recall@3 tied, table-category MRR was higher (0.750 vs. 0.508), broad page/range scoring was higher, code question tied, parsing was dramatically faster.
+
+## 10 · Not benchmarked here: where Docling could go next
+
+Current Docling documentation exposes capabilities beyond our pinned experiment:
+
+- **Granite-Docling-258M full-page VLM conversion** producing structured DocTags.
+- **Chart extraction** that can convert bar/pie/line charts into structured data such as CSV.
+- **VLM table structure recognition**, including Granite Vision 4.1 4B using OTSL.
+- **GPU/vLLM runtimes** for higher-throughput VLM conversion.
+- **Multiple OCR and vision model families** for different document domains/languages.
+- **Broader RAG integrations** across frameworks and search/vector backends.
+
+These are future experiments, not Project Aurora benchmark results.
+
+## 11 · Cost and deployment reality
+
+| Measure | Baseline | Docling |
+|---|---:|---:|
+| Local processing | **52 ms** | 32.6 min CPU |
+| Evidence tokens/query | 1,913 | **495** |
+| Chat input tokens | 32,537 | **13,951** |
+| Total chat tokens | 33,974 | **15,325** |
+| Mean query latency | 3,179 ms | **2,960 ms** |
+| p95 latency | 6,508 ms | **4,198 ms** |
+
+The CPU conversion time is descriptive of our quality profile and hardware, not a general Docling throughput claim.
+
+## 12 · Conclusion
+
+Docling did not replace RAG. It improved the **evidence model** RAG received: OCR evidence survived, table relationships remained addressable, chunks were more focused, and citations could resolve to exact source regions.
+
+> **Validate the ingestion layer with the same rigor as the model layer. A bigger LLM cannot retrieve evidence that never entered the index.**
+>
+> **Parse accurately. Retrieve structurally. Answer with evidence.**
+
+## Companion demo
+
+[https://github.com/tprem2002/parse-before-you-prompt](https://github.com/tprem2002/parse-before-you-prompt)
+
+The repository contains Project Aurora, both ingestion paths, FastAPI, Streamlit, ground truth, reference evaluation outputs, and evidence overlays.
+
+## Sources
+
+- https://docling-project.github.io/docling/
+- https://docling-project.github.io/docling/usage/model_catalog/
+- https://docling-project.github.io/docling/usage/vision_models/
+- https://docling-project.github.io/docling/reference/pipeline_options/
+- https://docling-project.github.io/docling/concepts/docling_document/
